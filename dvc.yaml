@@ -22,3 +22,19 @@ stages:
       - audio.sample_rate
     outs:
       - data/interim/alignments.jsonl
+
+  build_dataset:
+    cmd: python scripts/build_dataset.py
+    deps:
+      - scripts/build_dataset.py
+      - src/indic_eot/dataset.py
+      - data/interim/alignments.jsonl
+    params:
+      - seed
+      - audio
+      - dataset
+    outs:
+      - data/processed/eot
+    metrics:
+      - results/dataset_stats.json:
+          cache: false

@@ -9,5 +9,16 @@ audio:
 
 data:
   languages: [hi_in]            # FLEURS language codes; start with Hindi only
-  splits: [dev, test]           # FLEURS splits to download (train is 1.3 GB, added later)
-  max_clips_per_language: 500   # small on purpose for the first end-to-end slice
+  splits: [train, dev, test]    # FLEURS splits to download (train is 1.3 GB)
+
+dataset:
+  splits:                    # our split name: which FLEURS splits feed it
+    train: [train]
+    val: [dev]
+    test: [test]
+  min_words: 6               # drop source clips shorter than this
+  min_align_score: 0.7       # drop clips whose word timings look unreliable
+  examples_per_class: 2      # complete and incomplete examples made per source clip
+  min_words_before_cut: 3    # an incomplete example contains at least this many words
+  min_gap_ms: 60             # only cut where the speaker left at least this gap
+  tail_ms_range: [150, 400]  # silence after the speech, picked at random per example

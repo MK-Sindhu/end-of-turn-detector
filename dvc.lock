@@ -12,31 +12,79 @@ stages:
         data.languages:
         - hi_in
         data.splits:
+        - train
         - dev
         - test
     outs:
     - path: data/raw/fleurs
       hash: md5
-      md5: 9669bb2262d0086f678394958a1105dd.dir
-      size: 473728319
-      nfiles: 658
+      md5: aa290d161ee97ede9c8900f7c0b740e7.dir
+      size: 2008180239
+      nfiles: 2778
   align:
     cmd: python scripts/align_words.py
     deps:
     - path: data/raw/fleurs
       hash: md5
-      md5: 9669bb2262d0086f678394958a1105dd.dir
-      size: 473728319
-      nfiles: 658
+      md5: aa290d161ee97ede9c8900f7c0b740e7.dir
+      size: 2008180239
+      nfiles: 2778
     - path: scripts/align_words.py
       hash: md5
-      md5: 12d80a0b9a4be4ce31e73b81d532c857
-      size: 5415
+      md5: 9b163f0c8225522136487f51b0ad96ec
+      size: 5436
     params:
       params.yaml:
         audio.sample_rate: 16000
     outs:
     - path: data/interim/alignments.jsonl
       hash: md5
-      md5: b2b7824904736ca7e4379c3100db0413
-      size: 1442679
+      md5: 6221cc7cabdd744dc8605b165232c61a
+      size: 6149520
+  build_dataset:
+    cmd: python scripts/build_dataset.py
+    deps:
+    - path: data/interim/alignments.jsonl
+      hash: md5
+      md5: 6221cc7cabdd744dc8605b165232c61a
+      size: 6149520
+    - path: scripts/build_dataset.py
+      hash: md5
+      md5: 1c09ac20d6a76ba4905dc73a16debe76
+      size: 4910
+    - path: src/indic_eot/dataset.py
+      hash: md5
+      md5: 35dd09d309cbfdf3f12b29bdd4e82193
+      size: 6068
+    params:
+      params.yaml:
+        audio:
+          sample_rate: 16000
+          max_seconds: 8.0
+        dataset:
+          splits:
+            train:
+            - train
+            val:
+            - dev
+            test:
+            - test
+          min_words: 6
+          min_align_score: 0.7
+          examples_per_class: 2
+          min_words_before_cut: 3
+          min_gap_ms: 60
+          tail_ms_range:
+          - 150
+          - 400
+        seed: 42
+    outs:
+    - path: data/processed/eot
+      hash: md5
+      md5: cdb198458b132cc553dae9714846fc23.dir
+      size: 1142099912
+      nfiles: 10963
+    - path: results/dataset_stats.json
+      hash: md5
+      md5: 4678913cec8da7e94906b52fdac1ca22
+      size: 326

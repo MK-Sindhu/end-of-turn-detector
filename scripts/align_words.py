@@ -103,7 +103,7 @@ def main() -> None:
             originals, romans = romanise_words(clip["text"], clip["lang"], romaniser)
             try:
                 spans, num_frames = align_clip(waveform, romans, model, dictionary, device)
-            except Exception as err:  # e.g. transcript longer than the audio allows
+            except (RuntimeError, ValueError, KeyError) as err:  # e.g. transcript too long for the audio
                 skipped += 1
                 tqdm.write(f"skipped {clip['path']}: {err}")
                 continue
