@@ -1,0 +1,38 @@
+[project]
+name = "indic-eot"
+version = "0.1.0"
+description = "End-of-turn detection for Indian and code-switched speech"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "numpy",
+    "scipy",
+    "soundfile",
+    "pyyaml",
+    "tqdm",
+    "scikit-learn",
+    "torch",
+    "transformers",
+    "datasets",
+    "onnx",
+    "onnxruntime",
+    "mlflow",
+    "dvc",
+]
+
+[dependency-groups]
+dev = ["pytest", "ruff"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/indic_eot"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]

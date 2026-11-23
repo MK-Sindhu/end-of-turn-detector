@@ -5,13 +5,10 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 .ruff_cache/
-# data, caches, checkpoints (never commit)
-data/
-datasets/
-cache/
-checkpoints/
-runs/
-wandb/
+# experiment tracking (MLflow keeps runs locally)
+mlruns/
+mlflow.db
+# large files are tracked by DVC, which adds its own ignore entries
 *.ckpt
 *.pt
 *.safetensors

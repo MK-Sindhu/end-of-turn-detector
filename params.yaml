@@ -1,0 +1,12 @@
+# Every tunable setting lives here. Scripts read this file; nothing is hard-coded.
+# DVC watches it, so changing a value re-runs only the pipeline stages that use it.
+
+seed: 42
+
+audio:
+  sample_rate: 16000   # Hz; everything is resampled to this
+  max_seconds: 8.0     # the model looks at the last 8 s of speech
+
+data:
+  languages: [hi_in]            # FLEURS language codes; start with Hindi only
+  max_clips_per_language: 500   # small on purpose for the first end-to-end slice
