@@ -1,0 +1,14 @@
+# The pipeline. Each stage lists its command, what it depends on (deps, params)
+# and what it produces (outs). `dvc repro` runs a stage only if one of its
+# dependencies changed since the last run.
+
+stages:
+  download:
+    cmd: python scripts/download_fleurs.py
+    deps:
+      - scripts/download_fleurs.py
+    params:
+      - data.languages
+      - data.splits
+    outs:
+      - data/raw/fleurs

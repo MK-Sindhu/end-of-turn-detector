@@ -9,4 +9,5 @@ audio:
 
 data:
   languages: [hi_in]            # FLEURS language codes; start with Hindi only
+  splits: [dev, test]           # FLEURS splits to download (train is 1.3 GB, added later)
   max_clips_per_language: 500   # small on purpose for the first end-to-end slice
