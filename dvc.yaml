@@ -12,3 +12,13 @@ stages:
       - data.splits
     outs:
       - data/raw/fleurs
+
+  align:
+    cmd: python scripts/align_words.py
+    deps:
+      - scripts/align_words.py
+      - data/raw/fleurs
+    params:
+      - audio.sample_rate
+    outs:
+      - data/interim/alignments.jsonl

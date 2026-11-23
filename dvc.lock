@@ -20,3 +20,23 @@ stages:
       md5: 9669bb2262d0086f678394958a1105dd.dir
       size: 473728319
       nfiles: 658
+  align:
+    cmd: python scripts/align_words.py
+    deps:
+    - path: data/raw/fleurs
+      hash: md5
+      md5: 9669bb2262d0086f678394958a1105dd.dir
+      size: 473728319
+      nfiles: 658
+    - path: scripts/align_words.py
+      hash: md5
+      md5: 12d80a0b9a4be4ce31e73b81d532c857
+      size: 5415
+    params:
+      params.yaml:
+        audio.sample_rate: 16000
+    outs:
+    - path: data/interim/alignments.jsonl
+      hash: md5
+      md5: b2b7824904736ca7e4379c3100db0413
+      size: 1442679
