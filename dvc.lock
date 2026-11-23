@@ -50,8 +50,8 @@ stages:
       size: 6149520
     - path: scripts/build_dataset.py
       hash: md5
-      md5: 1c09ac20d6a76ba4905dc73a16debe76
-      size: 4910
+      md5: 9821ff8942a002009ba817dad607558a
+      size: 5348
     - path: src/indic_eot/dataset.py
       hash: md5
       md5: 35dd09d309cbfdf3f12b29bdd4e82193
@@ -81,10 +81,65 @@ stages:
     outs:
     - path: data/processed/eot
       hash: md5
-      md5: cdb198458b132cc553dae9714846fc23.dir
-      size: 1142099912
+      md5: 78034e50e2d8d2bcea7adfb61d1b117e.dir
+      size: 1142142568
       nfiles: 10963
     - path: results/dataset_stats.json
       hash: md5
       md5: 4678913cec8da7e94906b52fdac1ca22
       size: 326
+  validate:
+    cmd: python scripts/validate_dataset.py
+    deps:
+    - path: data/processed/eot
+      hash: md5
+      md5: 78034e50e2d8d2bcea7adfb61d1b117e.dir
+      size: 1142142568
+      nfiles: 10963
+    - path: scripts/validate_dataset.py
+      hash: md5
+      md5: a158a7b73e331a3050f7e592291eb959
+      size: 3410
+    params:
+      params.yaml:
+        audio:
+          sample_rate: 16000
+          max_seconds: 8.0
+        validation:
+          max_class_imbalance: 0.02
+          min_seconds: 0.5
+    outs:
+    - path: results/validation.json
+      hash: md5
+      md5: 0aca22befc86a12f29b8825fbbcea990
+      size: 692
+  shortcut_check:
+    cmd: python scripts/shortcut_check.py
+    deps:
+    - path: data/processed/eot
+      hash: md5
+      md5: 78034e50e2d8d2bcea7adfb61d1b117e.dir
+      size: 1142142568
+      nfiles: 10963
+    - path: results/validation.json
+      hash: md5
+      md5: 0aca22befc86a12f29b8825fbbcea990
+      size: 692
+    - path: scripts/shortcut_check.py
+      hash: md5
+      md5: d98bd03c5a0914ee2038a0485ae238d8
+      size: 5345
+    params:
+      params.yaml:
+        shortcut_check:
+          must_be_chance:
+          - length
+          - tail
+          max_auroc: 0.55
+          real_pause_ms: 250
+          connected_speech_ms: 80
+    outs:
+    - path: results/shortcut_check.json
+      hash: md5
+      md5: 5b70c5787dc43f681b2a64b20b47fe8e
+      size: 385

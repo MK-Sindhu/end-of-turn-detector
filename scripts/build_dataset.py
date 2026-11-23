@@ -86,8 +86,15 @@ def main() -> None:
         source_id = record["path"].split("/")[-1].removesuffix(".wav")
         (OUT_DIR / split).mkdir(parents=True, exist_ok=True)
 
+        words = record["words"]
         for i, ex in enumerate(examples):
             clip = render(audio, record, ex, sr, max_seconds)
+            # How long the speaker really paused at this point in the recording
+            # (for complete clips: the silence left before the recording ends).
+            next_start = (
+                words[ex.last_word + 1]["start"] if ex.label == 0 else record["duration"]
+            )
+            gap_ms = round((next_start - words[ex.last_word]["end"]) * 1000)
             clip_id = f"{record['lang']}_{source_id}_{ex.label}_{i}"
             path = OUT_DIR / split / f"{clip_id}.wav"
             sf.write(path, clip, sr, subtype="PCM_16")
@@ -101,6 +108,7 @@ def main() -> None:
                     "text": example_text(record, ex),
                     "seconds": round(len(clip) / sr, 3),
                     "tail_ms": ex.tail_ms,
+                    "gap_ms": gap_ms,
                     "sentence_id": record["sentence_id"],
                     "source_path": record["path"],
                 }

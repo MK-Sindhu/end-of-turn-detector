@@ -38,3 +38,27 @@ stages:
     metrics:
       - results/dataset_stats.json:
           cache: false
+
+  validate:
+    cmd: python scripts/validate_dataset.py
+    deps:
+      - scripts/validate_dataset.py
+      - data/processed/eot
+    params:
+      - audio
+      - validation
+    metrics:
+      - results/validation.json:
+          cache: false
+
+  shortcut_check:
+    cmd: python scripts/shortcut_check.py
+    deps:
+      - scripts/shortcut_check.py
+      - data/processed/eot
+      - results/validation.json
+    params:
+      - shortcut_check
+    metrics:
+      - results/shortcut_check.json:
+          cache: false

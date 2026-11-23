@@ -1,0 +1,21 @@
+{
+  "test_clips": 1620,
+  "auroc": {
+    "length": 0.5453,
+    "tail": 0.5406,
+    "edit_point": 0.7779,
+    "ending": 0.7779
+  },
+  "edit_point_by_cut_type": {
+    "real_pause": {
+      "auroc": 0.7407,
+      "incomplete_clips": 113
+    },
+    "connected_speech": {
+      "auroc": 0.752,
+      "incomplete_clips": 381
+    }
+  },
+  "limit_for_must_be_chance": 0.55,
+  "passed": true
+}
