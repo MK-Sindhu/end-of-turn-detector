@@ -201,6 +201,23 @@ The model now beats a 500 ms timeout on both measures and matches a 700 ms timeo
 - Taken with step 12: each model is good on data like its own training data and weak elsewhere. Our model has learned "FLEURS-style read Hindi", not end-of-turn detection in general.
 - Where it fails: about two thirds of the incomplete clips end in a filler sound ("um"), and our model catches 53 to 62% of those. The rest stop mid-sentence with no filler, and there it catches only 20 to 36% (Smart Turn: 64 to 78%). So the clips that stop cleanly mid-sentence are the hard ones for both models, and far harder for ours.
 
+## Step 14: Export the model so it can be deployed
+
+**What**: [scripts/export_onnx.py](scripts/export_onnx.py) converts the trained audio model to ONNX, a portable model format. [src/indic_eot/detector.py](src/indic_eot/detector.py) is the public interface (`EndOfTurnDetector.load()` then `.predict(audio)`), and [src/indic_eot/features.py](src/indic_eot/features.py) recomputes the model's input in plain numpy.
+
+**Why**: the goal is to host the detector as a product on a website. The trained model needs PyTorch, which is about 2 GB installed and far too heavy for a free server or a browser. The exported model needs only numpy and onnxruntime, and the same file can run inside a web page with onnxruntime-web.
+
+**Why two files**: the full-precision file stores each weight as a 32-bit number. The second file stores most weights as 8-bit numbers, which makes it about a third of the size. The export stage scores the whole test split with both and compares them with the original model, so any loss from the conversion is measured, not assumed.
+
+**Learned** (1,858 test clips, one CPU core):
+
+| File | Size | Accuracy | Decisions changed from the original | Median time per decision |
+|---|---|---|---|---|
+| Full precision | 31.8 MB | 87.2% | 0 | 22 ms |
+| 8-bit weights | 10.2 MB | 87.2% | 9 of 1,858 | 23 ms |
+
+The export is exact, and a decision costs about 22 ms, well under the 100 ms budget. The exported model is audio-only; the text model is 465 MB and is not part of the product for now.
+
 ## Where the project stands
 
 **What works**
@@ -222,7 +239,7 @@ The model now beats a 500 ms timeout on both measures and matches a 700 ms timeo
 1. More varied training data. Smart Turn's training set is published under the same CC-BY licence; adding its Hindi, Bengali and Marathi clips is the most direct fix for the weakness step 13 exposed.
 2. A smarter policy that waits a middling time when the model is unsure.
 3. A larger encoder; then more languages and Hinglish.
-4. Export to ONNX, package as `indic_eot`, measure speed.
+4. A hosted demo: an API service and a browser page that runs the exported model.
 5. Record and test on real hesitant speech.
 
 ## The main lesson
