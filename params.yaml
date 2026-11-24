@@ -60,3 +60,12 @@ train_text:
   lr: 5.0e-5
   weight_decay: 0.01
   warmup_fraction: 0.1
+
+streaming:
+  min_silence_ms: 200        # quiet time before the model is asked
+  fallback_ms: 1500          # respond anyway after this much quiet
+  silence_timeouts_ms: [300, 500, 700, 1000, 1500]  # plain-timeout baselines
+  report_thresholds: [0.5, 0.7, 0.9]  # model thresholds shown in the results table
+  hesitation:                # ASSUMED lengths of mid-sentence thinking pauses
+    median_ms: 500
+    sigma: 0.6               # spread (log-normal): about 12% of pauses exceed 1 s

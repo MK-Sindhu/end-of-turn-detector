@@ -122,3 +122,39 @@ stages:
     metrics:
       - results/fusion_metrics.json:
           cache: false
+
+  stream_points:
+    cmd: python scripts/stream_points.py
+    deps:
+      - scripts/stream_points.py
+      - src/indic_eot/audio_model.py
+      - src/indic_eot/text_model.py
+      - data/interim/alignments.jsonl
+      - data/raw/fleurs
+      - models/audio/model.pt
+      - models/text
+      - models/fusion.json
+    params:
+      - audio
+      - dataset.splits
+      - dataset.min_words
+      - dataset.min_align_score
+      - streaming.min_silence_ms
+      - train_audio.encoder
+    outs:
+      - results/stream_points.csv
+
+  simulate:
+    cmd: python scripts/simulate.py
+    deps:
+      - scripts/simulate.py
+      - results/stream_points.csv
+    params:
+      - seed
+      - streaming
+    metrics:
+      - results/streaming_metrics.json:
+          cache: false
+    plots:
+      - results/streaming_tradeoff.png:
+          cache: false

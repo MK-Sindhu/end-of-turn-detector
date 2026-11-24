@@ -68,7 +68,10 @@ def paired_difference(labels, probs_a, probs_b, groups, mask=None, n=2000, seed=
         diffs.append(correct_b[idx].mean() - correct_a[idx].mean())
     return {
         "difference": round(float(correct_b[mask].mean() - correct_a[mask].mean()), 4),
-        "ci95": [round(float(np.percentile(diffs, 2.5)), 4), round(float(np.percentile(diffs, 97.5)), 4)],
+        "ci95": [
+            round(float(np.percentile(diffs, 2.5)), 4),
+            round(float(np.percentile(diffs, 97.5)), 4),
+        ],
         "clips": int(mask.sum()),
     }
 
@@ -136,7 +139,9 @@ def main() -> None:
         writer.writeheader()
         for split, d in data.items():
             for r, p in zip(d["rows"], d["fusion"]):
-                writer.writerow({"id": r["id"], "split": split, "label": r["label"], "prob": f"{p:.5f}"})
+                writer.writerow(
+                    {"id": r["id"], "split": split, "label": r["label"], "prob": f"{p:.5f}"}
+                )
 
     with start_mlflow_run(params["mlflow"]["experiment"], run_name="fusion"):
         mlflow.log_params(weights)
@@ -153,7 +158,9 @@ def main() -> None:
 
     # A compact table for the terminal.
     print(f"\nweights: {weights}\n")
-    print(f"{'model':8} {'accuracy':>9} {'auroc':>7} {'real-pause recall':>18} {'flowing-speech recall':>22}")
+    print(
+        f"{'model':8} {'accuracy':>9} {'auroc':>7} {'real-pause recall':>18} {'flowing-speech recall':>22}"
+    )
     for name, m in report["test"].items():
         print(
             f"{name:8} {m['accuracy']:9.4f} {m['auroc']:7.4f} "

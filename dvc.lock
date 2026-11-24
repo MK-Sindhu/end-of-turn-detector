@@ -273,8 +273,8 @@ stages:
       size: 116143
     - path: scripts/fuse.py
       hash: md5
-      md5: 405da8f6d84492840cd2421ed2bacf30
-      size: 6633
+      md5: 86da814c3f364d7834bef02160648248
+      size: 6720
     - path: src/indic_eot/evaluation.py
       hash: md5
       md5: b7fd1f53de6fc4f0ee95f22d465c74eb
@@ -296,3 +296,100 @@ stages:
       hash: md5
       md5: 889653d1572f9779985ab422f7d41bf7
       size: 116143
+  stream_points:
+    cmd: python scripts/stream_points.py
+    deps:
+    - path: data/interim/alignments.jsonl
+      hash: md5
+      md5: 6221cc7cabdd744dc8605b165232c61a
+      size: 6149520
+    - path: data/raw/fleurs
+      hash: md5
+      md5: aa290d161ee97ede9c8900f7c0b740e7.dir
+      size: 2008180239
+      nfiles: 2778
+    - path: models/audio/model.pt
+      hash: md5
+      md5: 939c092c8781b719702bbe0da4d00b3b
+      size: 31759530
+    - path: models/fusion.json
+      hash: md5
+      md5: e4075b3f340d3038a9cd139750caba5e
+      size: 63
+    - path: models/text
+      hash: md5
+      md5: b69e2917153679163ee8c001578e6614.dir
+      size: 487724541
+      nfiles: 4
+    - path: scripts/stream_points.py
+      hash: md5
+      md5: a920b9c9b5cc54eb98469faee36d81e6
+      size: 6065
+    - path: src/indic_eot/audio_model.py
+      hash: md5
+      md5: 3f431424148d881145e213f298b6ffae
+      size: 4139
+    - path: src/indic_eot/text_model.py
+      hash: md5
+      md5: f0d57a6e36f213f8cc609d8d35525616
+      size: 1782
+    params:
+      params.yaml:
+        audio:
+          sample_rate: 16000
+          max_seconds: 8.0
+        dataset.min_align_score: 0.7
+        dataset.min_words: 6
+        dataset.splits:
+          train:
+          - train
+          val:
+          - dev
+          test:
+          - test
+        streaming.min_silence_ms: 200
+        train_audio.encoder: openai/whisper-tiny
+    outs:
+    - path: results/stream_points.csv
+      hash: md5
+      md5: 93424a29372d762c98101d0c2c459711
+      size: 246823
+  simulate:
+    cmd: python scripts/simulate.py
+    deps:
+    - path: results/stream_points.csv
+      hash: md5
+      md5: 93424a29372d762c98101d0c2c459711
+      size: 246823
+    - path: scripts/simulate.py
+      hash: md5
+      md5: bea6b328f2d7d1e43ed8d729832de925
+      size: 11138
+    params:
+      params.yaml:
+        seed: 42
+        streaming:
+          min_silence_ms: 200
+          fallback_ms: 1500
+          silence_timeouts_ms:
+          - 300
+          - 500
+          - 700
+          - 1000
+          - 1500
+          report_thresholds:
+          - 0.5
+          - 0.7
+          - 0.9
+          hesitation:
+            median_ms: 500
+            sigma: 0.6
+    outs:
+    - path: results/streaming_metrics.json
+      hash: md5
+      md5: ce3c8321da5f51cdf6511847c5152473
+      size: 74267
+    - path: results/streaming_tradeoff.png
+      hash: md5
+      md5: 5f30ecc64f786451fb6a8fc5d8321aaf
+      size: 150733
