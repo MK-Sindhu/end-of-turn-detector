@@ -256,3 +256,43 @@ stages:
       hash: md5
       md5: 3934dea7106ef1a1a34fa114eb6c4b26
       size: 116143
+  fuse:
+    cmd: python scripts/fuse.py
+    deps:
+    - path: data/processed/eot/metadata.csv
+      hash: md5
+      md5: ea951fe14b7155dd78c4c046cf2b66ae
+      size: 3051769
+    - path: results/audio_predictions.csv
+      hash: md5
+      md5: d28df3bbff22d3b860bf2ada04a8c87a
+      size: 116143
+    - path: results/text_predictions.csv
+      hash: md5
+      md5: 3934dea7106ef1a1a34fa114eb6c4b26
+      size: 116143
+    - path: scripts/fuse.py
+      hash: md5
+      md5: 405da8f6d84492840cd2421ed2bacf30
+      size: 6633
+    - path: src/indic_eot/evaluation.py
+      hash: md5
+      md5: b7fd1f53de6fc4f0ee95f22d465c74eb
+      size: 1259
+    params:
+      params.yaml:
+        shortcut_check.connected_speech_ms: 80
+        shortcut_check.real_pause_ms: 250
+    outs:
+    - path: models/fusion.json
+      hash: md5
+      md5: e4075b3f340d3038a9cd139750caba5e
+      size: 63
+    - path: results/fusion_metrics.json
+      hash: md5
+      md5: 1b9fded4a899e720ba20205315a28db2
+      size: 2104
+    - path: results/fusion_predictions.csv
+      hash: md5
+      md5: 889653d1572f9779985ab422f7d41bf7
+      size: 116143

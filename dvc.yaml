@@ -103,3 +103,22 @@ stages:
     metrics:
       - results/text_metrics.json:
           cache: false
+
+  fuse:
+    cmd: python scripts/fuse.py
+    deps:
+      - scripts/fuse.py
+      - src/indic_eot/evaluation.py
+      - data/processed/eot/metadata.csv
+      - results/audio_predictions.csv
+      - results/text_predictions.csv
+    params:
+      - shortcut_check.real_pause_ms
+      - shortcut_check.connected_speech_ms
+    outs:
+      - results/fusion_predictions.csv
+      - models/fusion.json:
+          cache: false
+    metrics:
+      - results/fusion_metrics.json:
+          cache: false
