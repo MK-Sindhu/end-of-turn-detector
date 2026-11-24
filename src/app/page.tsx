@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Backdrop } from "@/components/Backdrop";
+import { HeroStrip } from "@/components/HeroStrip";
 import { Footer, Nav } from "@/components/Nav";
 import { site } from "@/lib/site";
 
@@ -7,32 +7,36 @@ export default function Home() {
   return (
     <>
       <section className="hero hero-home">
-        <Backdrop variant="ember" />
         <Nav />
         <div className="hero-body">
           <p className="eyebrow">Voice AI, built for how India speaks</p>
           <h1>
-            Voice agents that
-            <br />
-            know when to speak.
+            Voice agents that know when you have finished<span className="danda" aria-hidden="true">।</span>
           </h1>
           <p className="lede">
             People pause to think. Most voice agents hear silence and jump in. {site.company} builds the
             models and the tests that teach agents to wait for the end of the thought.
           </p>
           <div className="actions">
-            <Link href="/viraam#demo" className="pill pill-light">Try it with your voice</Link>
-            <Link href="/viraam#results" className="pill pill-ghost">See the measurements</Link>
+            <Link href="/viraam#demo" className="btn btn-solid">Try it with your voice</Link>
+            <Link href="/viraam#results" className="btn btn-line">See the measurements</Link>
           </div>
         </div>
+        <figure className="hero-figure">
+          <HeroStrip />
+          <figcaption>
+            <span lang="hi">मुझे कल शाम के लिए … दो टिकट चाहिए।</span>
+            “For tomorrow evening … I need two tickets.” One turn, with the pause every agent has to judge.
+          </figcaption>
+        </figure>
       </section>
 
       <main>
         <section className="section" id="products">
           <p className="eyebrow">Two projects</p>
-          <h2>One teaches the agent to listen. The other tries to break it.</h2>
+          <h2>One teaches the agent to listen. The other tries to break it<span className="danda" aria-hidden="true">।</span></h2>
           <div className="products">
-            <Link href="/viraam" className="product glass">
+            <Link href="/viraam" className="product card">
               <span className="tag tag-live">Live demo</span>
               <h3>End-of-turn detector</h3>
               <p>
@@ -45,7 +49,7 @@ export default function Home() {
               <span className="more">Open the detector →</span>
             </Link>
 
-            <div className="product glass" id="arena">
+            <div className="product card" id="arena">
               <span className="tag">In development</span>
               <h3>Stress-test arena</h3>
               <p>
@@ -68,7 +72,7 @@ export default function Home() {
 
         <section className="section">
           <p className="eyebrow">How the work is done</p>
-          <h2>Numbers you can check.</h2>
+          <h2>Numbers you can check<span className="danda" aria-hidden="true">।</span></h2>
           <div className="principles">
             <div>
               <h3>Tested the way it is used</h3>

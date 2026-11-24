@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Backdrop } from "@/components/Backdrop";
 import { Demo } from "@/components/Demo";
 import { Footer, Nav } from "@/components/Nav";
 import { TradeoffChart } from "@/components/TradeoffChart";
@@ -35,7 +34,6 @@ export default function Viraam() {
   return (
     <>
       <section className="hero hero-product">
-        <Backdrop variant="dusk" />
         <Nav />
         <div className="hero-body">
           <p className="eyebrow">End-of-turn detector</p>
@@ -54,12 +52,12 @@ export default function Viraam() {
       </section>
 
       <main>
-        <section className="section" id="demo">
+        <section className="section section-night" id="demo">
           <p className="eyebrow">Live</p>
-          <h2>Speak, pause, carry on.</h2>
+          <h2>Speak, pause, carry on<span className="danda" aria-hidden="true">।</span></h2>
           <p className="section-lede">
-            Say a sentence and stop in the middle to think. The sphere turns amber when the model
-            decides to wait and blue when it decides you are done.
+            Say a sentence and stop in the middle to think. Your voice is drawn as bars. At each pause
+            the model leaves a mark: yellow to keep waiting, green to reply.
           </p>
           <Demo />
           <p className="fine">
@@ -71,17 +69,17 @@ export default function Viraam() {
         <section className="section">
           <p className="eyebrow">What happens at a pause</p>
           <div className="steps">
-            <div className="glass"><span>1</span><h3>You go quiet</h3><p>After 200 ms of silence the agent asks the model. A timer would still be counting.</p></div>
-            <div className="glass"><span>2</span><h3>The model listens back</h3><p>It hears the last 8 seconds: the falling pitch and fading energy of an ending, or the held tone of a thought in progress.</p></div>
-            <div className="glass"><span>3</span><h3>The agent replies or waits</h3><p>Confident you finished: reply now. Otherwise keep listening, for up to 1.5 seconds.</p></div>
+            <div className="card"><span>1</span><h3>You go quiet</h3><p>After 200 ms of silence the agent asks the model. A timer would still be counting.</p></div>
+            <div className="card"><span>2</span><h3>The model listens back</h3><p>It hears the last 8 seconds: the falling pitch and fading energy of an ending, or the held tone of a thought in progress.</p></div>
+            <div className="card"><span>3</span><h3>The agent replies or waits</h3><p>Confident you finished: reply now. Otherwise keep listening, for up to 1.5 seconds.</p></div>
           </div>
         </section>
 
         <section className="section" id="results">
           <p className="eyebrow">Results</p>
-          <h2>Measured, including where it loses.</h2>
+          <h2>Measured, including where it loses<span className="danda" aria-hidden="true">।</span></h2>
           <div className="results">
-            <div className="glass">
+            <div className="card">
               <h3>As an agent&apos;s turn-taking rule</h3>
               <p className="cap">406 unedited Hindi test recordings. “Cut off” means the agent replied before the speaker had finished.</p>
               <TradeoffChart />
@@ -99,7 +97,7 @@ export default function Viraam() {
               </div>
               <p className="takeaway">Faster and less interrupting than a 500 ms timer. It does not yet reach the low cut-off rate of a 700 ms timer; pauses at commas are the main cause.</p>
             </div>
-            <div className="glass">
+            <div className="card">
               <h3>Against Smart Turn v3.2, on its own test set</h3>
               <p className="cap">Pipecat&apos;s published test clips (synthetic speech). Smart Turn trained on this collection; Viraam had never seen it. Accuracy:</p>
               <div className="bars">
@@ -118,7 +116,7 @@ export default function Viraam() {
 
         <section className="section" id="api">
           <p className="eyebrow">API</p>
-          <h2>One request per pause.</h2>
+          <h2>One request per pause<span className="danda" aria-hidden="true">।</span></h2>
           <p className="section-lede">Send the speech so far, up to the pause. You get back the probability that the turn is complete.</p>
           <div className="code">
             <figure><figcaption>HTTP</figcaption><pre>{curl}</pre></figure>
@@ -128,7 +126,7 @@ export default function Viraam() {
 
         <section className="section">
           <p className="eyebrow">Limits</p>
-          <h2>What it cannot do yet.</h2>
+          <h2>What it cannot do yet<span className="danda" aria-hidden="true">।</span></h2>
           <ul className="limits">
             <li>It was trained on read Hindi speech from one corpus. Expect weaker results on casual conversation, other accents and other languages.</li>
             <li>It judges sound only, not words. A pause after a clause that could stand alone is often called finished.</li>

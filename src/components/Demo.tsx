@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { site } from "@/lib/site";
-import { Live, Orb, OrbState } from "./Orb";
+import { drawStrip, fit, Mark, MarkKind, palette } from "./strip";
 
 const RATE = 16000; // the model expects 16 kHz
 const FRAME = 320; // 20 ms
@@ -10,6 +10,7 @@ const MIN_SILENCE_MS = 200; // ask the model after this much quiet
 const FALLBACK_MS = 1500; // stop waiting and treat the turn as over
 const MAX_SAMPLES = 8 * RATE;
 const BASELINE_MS = 700; // the fixed timer shown for comparison
+const SLOTS = 400; // the strip shows the last 8 seconds, one slot per 20 ms
 
 type Kind = "" | "wait" | "reply" | "cut";
 type Row = {
@@ -64,7 +65,8 @@ export function Demo() {
   const [threshold, setThreshold] = useState(0.5);
   const [sample, setSample] = useState<Record<string, string>>({});
 
-  const live = useRef<Live>({ level: 0, state: "idle" });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const live = useRef({ levels: [] as number[], marks: [] as Mark[], count: 0, current: null as Mark | null });
   const thresholdRef = useRef(threshold);
   const audio = useRef<{ context: AudioContext; stream: MediaStream } | null>(null);
   // Everything about the turn in progress. Kept outside React state because it
@@ -91,9 +93,9 @@ export function Demo() {
     setRows((all) => all.map((row) => (row.id === id ? { ...row, ...change } : row)));
   }, []);
 
-  const say = useCallback((text: string, kind: Kind, state: OrbState) => {
+  const say = useCallback((text: string, kind: Kind, mark?: MarkKind) => {
     setStatus({ text, kind });
-    live.current.state = state;
+    if (mark && live.current.current) live.current.current.kind = mark;
   }, []);
 
   const resetTurn = useCallback(() => {
@@ -114,6 +116,9 @@ export function Demo() {
     const requestId = ++t.requestId;
     const rowId = (t.rowId = t.nextRow++);
     t.replied = false;
+    const mark: Mark = { at: live.current.count, kind: "wait", text: "…" };
+    live.current.marks.push(mark);
+    live.current.current = mark;
     setRows((all) =>
       [
         { id: rowId, pause: "…", said: "…", decision: "", decisionKind: "" as Kind, did: "", timer: "", timerKind: "" as Kind },
@@ -130,19 +135,22 @@ export function Demo() {
       setProbability(result.probability);
       setLatency(result.inference_ms);
       patch(rowId, { said: `${percent} finished` });
+      mark.text = percent;
       if (requestId !== t.requestId) return; // the speaker has already carried on
       if (result.probability >= thresholdRef.current) {
         t.decided = true;
         t.replied = true;
         patch(rowId, { decision: "Reply now", decisionKind: "reply" });
-        say(`Finished. An agent would reply now, ${Math.round(t.silenceMs)} ms after you stopped.`, "reply", "reply");
+        mark.kind = "reply";
+        say(`Finished. An agent would reply now, ${Math.round(t.silenceMs)} ms after you stopped.`, "reply");
       } else {
         patch(rowId, { decision: "Keep waiting", decisionKind: "wait" });
-        say("A pause. The model thinks you have more to say.", "wait", "wait");
+        say("A pause. The model thinks you have more to say.", "wait");
       }
     } catch (error) {
       patch(rowId, { said: "No answer" });
-      say(`The model could not be reached (${(error as Error).message}). Check that the service is running.`, "cut", "cut");
+      mark.text = "no answer";
+      say(`The model could not be reached (${(error as Error).message}). Check that the service is running.`, "cut");
     }
   }, [patch, say]);
 
@@ -159,6 +167,7 @@ export function Demo() {
           timerKind: pause >= BASELINE_MS ? "cut" : "",
           ...(t.replied ? { decision: "Replied too early", decisionKind: "cut" as Kind } : {}),
         });
+        if (t.replied && live.current.current) live.current.current.kind = "cut";
       } else {
         patch(t.rowId, { pause: `${pause} ms`, did: "Had finished", timer: `Replies at ${BASELINE_MS} ms` });
       }
@@ -175,7 +184,13 @@ export function Demo() {
       // The floor drops quickly to quiet levels and creeps up slowly, so it tracks the room.
       t.floorDb = db < t.floorDb ? t.floorDb * 0.9 + db * 0.1 : Math.min(t.floorDb + 0.02, -30);
       const speaking = db > t.floorDb + 12 && db > -55;
-      live.current.level = speaking ? Math.max(0, Math.min(1, (db + 55) / 40)) : 0;
+      const strip = live.current;
+      strip.levels.push(speaking ? Math.max(0.08, Math.min(1, (db + 55) / 40)) : 0);
+      strip.count++;
+      if (strip.levels.length > SLOTS) {
+        strip.levels.shift();
+        strip.marks = strip.marks.filter((m) => m.at > strip.count - SLOTS);
+      }
 
       if (speaking) {
         if (t.silenceMs >= MIN_SILENCE_MS && t.speechMs >= 300) closePause(true);
@@ -190,7 +205,7 @@ export function Demo() {
         t.frames.push(frame);
         if (t.frames.length > MAX_SAMPLES / FRAME) t.frames.shift();
         if (t.speechMs === 300) {
-          say("Listening…", "", "listening");
+          say("Listening…", "");
           setSilence(0);
         }
         return;
@@ -207,7 +222,7 @@ export function Demo() {
         if (!t.decided) {
           t.decided = true;
           if (t.rowId) patch(t.rowId, { decision: `Reply (waited ${FALLBACK_MS} ms)`, decisionKind: "wait" });
-          say(`Finished. The model was unsure, so the agent waited the full ${FALLBACK_MS} ms.`, "wait", "reply");
+          say(`Finished. The model was unsure, so the agent waited the full ${FALLBACK_MS} ms.`, "wait");
         }
         if (t.rowId) {
           closePause(false);
@@ -222,7 +237,6 @@ export function Demo() {
     audio.current?.stream.getTracks().forEach((track) => track.stop());
     void audio.current?.context.close();
     audio.current = null;
-    live.current = { level: 0, state: "idle" };
     setRunning(false);
     setSilence(null);
     setStatus({ text: "The microphone is off.", kind: "" });
@@ -230,7 +244,7 @@ export function Demo() {
 
   const start = useCallback(async () => {
     if (!navigator.mediaDevices || !window.AudioWorkletNode) {
-      say("This browser cannot record here. Open the page over https in a current browser.", "cut", "cut");
+      say("This browser cannot record here. Open the page over https in a current browser.", "cut");
       return;
     }
     let stream: MediaStream;
@@ -239,7 +253,7 @@ export function Demo() {
         audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true },
       });
     } catch {
-      say("Microphone access was refused. Allow it in the browser's site settings, then start again.", "cut", "cut");
+      say("Microphone access was refused. Allow it in the browser's site settings, then start again.", "cut");
       return;
     }
     let context: AudioContext;
@@ -266,11 +280,38 @@ export function Demo() {
     turn.current.pending = new Float32Array(0);
     turn.current.floorDb = -60;
     resetTurn();
+    live.current = { levels: [], marks: [], count: 0, current: null };
     setRunning(true);
-    say("Listening. Say a sentence and pause partway through.", "", "listening");
+    say("Listening. Say a sentence and pause partway through.", "");
   }, [onFrame, resetTurn, say]);
 
   useEffect(() => stop, [stop]);
+
+  // Redraw the strip on every animation frame while the microphone is on.
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const colors = palette(canvas);
+    let size = fit(canvas);
+    let frame = 0;
+    const render = () => {
+      const strip = live.current;
+      const first = strip.count - strip.levels.length;
+      const marks = strip.marks.map((m) => ({ ...m, at: m.at - first }));
+      drawStrip(size.g, size.width, size.height, strip.levels, marks, colors, SLOTS);
+      if (running) frame = requestAnimationFrame(render);
+    };
+    const onResize = () => {
+      size = fit(canvas);
+      render();
+    };
+    window.addEventListener("resize", onResize);
+    render();
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [running]);
 
   const scoreSample = useCallback(async (file: string) => {
     setSample((all) => ({ ...all, [file]: "Scoring…" }));
@@ -281,7 +322,6 @@ export function Demo() {
       const result = await request(form);
       setProbability(result.probability);
       setLatency(result.inference_ms);
-      live.current.state = result.complete ? "reply" : "wait";
       setSample((all) => ({
         ...all,
         [file]: `${Math.round(result.probability * 100)}% finished: ${result.complete ? "reply" : "keep waiting"}`,
@@ -292,15 +332,22 @@ export function Demo() {
   }, []);
 
   return (
-    <div className="demo glass">
+    <div className="demo">
       <div className="demo-stage">
-        <Orb live={live} />
-        <p className={`demo-status ${status.kind}`} aria-live="polite">
-          {status.text}
+        <div className="demo-bar">
+          <button className={`btn ${running ? "btn-line" : "btn-solid"}`} onClick={running ? stop : start}>
+            {running ? "Stop microphone" : "Start microphone"}
+          </button>
+          <p className={`demo-status ${status.kind}`} aria-live="polite">
+            {status.text}
+          </p>
+        </div>
+        <canvas ref={canvasRef} className="strip strip-live" role="img" aria-label="Your speech as bars, with a mark at each pause the model judged" />
+        <p className="legend">
+          <span className="k-wait">। keep waiting</span>
+          <span className="k-reply">। reply</span>
+          <span className="k-cut">। replied, but you carried on</span>
         </p>
-        <button className={`pill ${running ? "pill-ghost" : "pill-light"}`} onClick={running ? stop : start}>
-          {running ? "Stop microphone" : "Start microphone"}
-        </button>
       </div>
 
       <div className="demo-side">

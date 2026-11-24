@@ -5,7 +5,7 @@ export function Nav() {
   return (
     <header className="nav">
       <Link href="/" className="brand">
-        <span className="brand-mark" aria-hidden="true" />
+        <span className="brand-mark" aria-hidden="true">।</span>
         {site.company}
       </Link>
       <nav aria-label="Main">
@@ -13,7 +13,7 @@ export function Nav() {
         <Link href="/#arena">Stress-test arena</Link>
         <Link href="/viraam#api">API</Link>
       </nav>
-      <Link href="/viraam#demo" className="pill pill-light">
+      <Link href="/viraam#demo" className="btn btn-solid">
         Try the demo
       </Link>
     </header>
@@ -25,7 +25,7 @@ export function Footer() {
     <footer className="footer">
       <div>
         <span className="brand">
-          <span className="brand-mark" aria-hidden="true" />
+          <span className="brand-mark" aria-hidden="true">।</span>
           {site.company}
         </span>
         <p>Viraam (विराम) is Hindi for “pause”.</p>
