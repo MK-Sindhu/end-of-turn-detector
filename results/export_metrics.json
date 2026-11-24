@@ -1,0 +1,24 @@
+{
+  "test_clips": 1858,
+  "cpu_threads": 1,
+  "full_precision": {
+    "size_mb": 31.8,
+    "accuracy": 0.8724,
+    "pytorch_accuracy": 0.8724,
+    "max_probability_difference": 0.0,
+    "mean_probability_difference": 0.0,
+    "decisions_changed": 0,
+    "cpu_ms_median": 21.8,
+    "cpu_ms_p95": 26.5
+  },
+  "int8": {
+    "size_mb": 10.2,
+    "accuracy": 0.8719,
+    "pytorch_accuracy": 0.8724,
+    "max_probability_difference": 0.1597,
+    "mean_probability_difference": 0.00714,
+    "decisions_changed": 9,
+    "cpu_ms_median": 23.2,
+    "cpu_ms_p95": 26.5
+  }
+}

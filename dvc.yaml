@@ -184,6 +184,25 @@ stages:
       - results/smart_turn_test_metrics.json:
           cache: false
 
+  export:
+    cmd: python scripts/export_onnx.py
+    deps:
+      - scripts/export_onnx.py
+      - src/indic_eot/audio_model.py
+      - src/indic_eot/features.py
+      - src/indic_eot/detector.py
+      - data/processed/eot
+      - models/audio/model.pt
+      - results/audio_predictions.csv
+    params:
+      - audio
+      - train_audio.encoder
+    outs:
+      - src/indic_eot/assets
+    metrics:
+      - results/export_metrics.json:
+          cache: false
+
   simulate:
     cmd: python scripts/simulate.py
     deps:

@@ -499,3 +499,51 @@ stages:
       hash: md5
       md5: 79b779e7866346a66382e2ab8ad16d6c
       size: 183521
+  export:
+    cmd: python scripts/export_onnx.py
+    deps:
+    - path: data/processed/eot
+      hash: md5
+      md5: 63dfe4b8b0b7052f4d343c790632cb9a.dir
+      size: 1183926041
+      nfiles: 11507
+    - path: models/audio/model.pt
+      hash: md5
+      md5: 93c2cacc5f1e3a57c800fbfa471f0300
+      size: 31759530
+    - path: results/audio_predictions.csv
+      hash: md5
+      md5: 60675ae90aa14c2a1d3fce69220d2255
+      size: 128585
+    - path: scripts/export_onnx.py
+      hash: md5
+      md5: 8c98d13a17621f98ef8ce9f4e2d94da0
+      size: 5515
+    - path: src/indic_eot/audio_model.py
+      hash: md5
+      md5: 3f431424148d881145e213f298b6ffae
+      size: 4139
+    - path: src/indic_eot/detector.py
+      hash: md5
+      md5: ffb486534a5634b31873137e90c9dd2a
+      size: 1937
+    - path: src/indic_eot/features.py
+      hash: md5
+      md5: 56e04cdc69c6c13fc37ec86288dfc3ce
+      size: 2377
+    params:
+      params.yaml:
+        audio:
+          sample_rate: 16000
+          max_seconds: 8.0
+        train_audio.encoder: openai/whisper-tiny
+    outs:
+    - path: results/export_metrics.json
+      hash: md5
+      md5: f137f952b6d09cfb99938de6e7217059
+      size: 564
+    - path: src/indic_eot/assets
+      hash: md5
+      md5: f72074935e3fe8c532fb85851ff43584.dir
+      size: 42138377
+      nfiles: 4
