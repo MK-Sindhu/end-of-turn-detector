@@ -143,3 +143,64 @@ stages:
       hash: md5
       md5: 5b70c5787dc43f681b2a64b20b47fe8e
       size: 385
+  train_audio:
+    cmd: python scripts/train_audio.py
+    deps:
+    - path: data/processed/eot
+      hash: md5
+      md5: 78034e50e2d8d2bcea7adfb61d1b117e.dir
+      size: 1142142568
+      nfiles: 10963
+    - path: results/shortcut_check.json
+      hash: md5
+      md5: 5b70c5787dc43f681b2a64b20b47fe8e
+      size: 385
+    - path: scripts/train_audio.py
+      hash: md5
+      md5: 617f72e081ae5b9ccd14a80b974f199b
+      size: 9132
+    - path: src/indic_eot/audio_model.py
+      hash: md5
+      md5: 3f431424148d881145e213f298b6ffae
+      size: 4139
+    - path: src/indic_eot/training.py
+      hash: md5
+      md5: 403b16d37b54d947d924848ccaee2532
+      size: 5190
+    params:
+      params.yaml:
+        audio:
+          sample_rate: 16000
+          max_seconds: 8.0
+        seed: 42
+        shortcut_check.connected_speech_ms: 80
+        shortcut_check.real_pause_ms: 250
+        train_audio:
+          encoder: openai/whisper-tiny
+          epochs: 6
+          batch_size: 32
+          num_workers: 4
+          lr_encoder: 5e-05
+          lr_head: 0.001
+          weight_decay: 0.01
+          warmup_fraction: 0.1
+          dropout: 0.1
+          augment:
+            gain_db: 6
+            noise_prob: 0.5
+            snr_db_range:
+            - 10
+            - 40
+    outs:
+    - path: models/audio/model.pt
+      hash: md5
+      md5: 446b6e0423033a04612e412fed2eb07f
+      size: 31759530
+    - path: results/audio_metrics.json
+      hash: md5
+      md5: eabb5b6d9922608270b6fd962ac4eee3
+      size: 1033
+    - path: results/audio_predictions.csv
+      hash: md5
+      md5: 981fa4bf2e8c6e42bc01d388577ab81b
+      size: 116143

@@ -62,3 +62,24 @@ stages:
     metrics:
       - results/shortcut_check.json:
           cache: false
+
+  train_audio:
+    cmd: python scripts/train_audio.py
+    deps:
+      - scripts/train_audio.py
+      - src/indic_eot/audio_model.py
+      - src/indic_eot/training.py
+      - data/processed/eot
+      - results/shortcut_check.json
+    params:
+      - seed
+      - audio
+      - train_audio
+      - shortcut_check.real_pause_ms
+      - shortcut_check.connected_speech_ms
+    outs:
+      - models/audio/model.pt
+      - results/audio_predictions.csv
+    metrics:
+      - results/audio_metrics.json:
+          cache: false

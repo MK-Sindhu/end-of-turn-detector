@@ -32,3 +32,21 @@ shortcut_check:
   max_auroc: 0.55                 # limit for those groups (0.5 = guessing)
   real_pause_ms: 250              # incomplete clips cut at a gap at least this long
   connected_speech_ms: 80         # incomplete clips cut at a gap at most this long
+
+train_audio:
+  encoder: openai/whisper-tiny  # pretrained speech encoder (8M parameters)
+  epochs: 6
+  batch_size: 32
+  num_workers: 4          # processes preparing audio in parallel
+  lr_encoder: 5.0e-5      # small: the encoder is pretrained, only nudge it
+  lr_head: 1.0e-3         # larger: the classifier head starts from scratch
+  weight_decay: 0.01
+  warmup_fraction: 0.1    # ramp the learning rate up over the first 10% of steps
+  dropout: 0.1
+  augment:
+    gain_db: 6            # random volume change of up to +/- 6 dB
+    noise_prob: 0.5       # half the training clips get background noise
+    snr_db_range: [10, 40]  # how loud that noise is relative to the speech
+
+mlflow:
+  experiment: indic-eot
