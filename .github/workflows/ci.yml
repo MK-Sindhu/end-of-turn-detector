@@ -1,0 +1,56 @@
+# CI: runs on every push and pull request. Nothing is deployed from here.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_call:
+
+jobs:
+  test:
+    name: Lint and tests
+    runs-on: ubuntu-latest
+    env:
+      # Optional: set the repository variable EOT_MODEL_REPO to the published
+      # model, and the tests that need a model run too. Without it they skip.
+      EOT_MODEL_REPO: ${{ vars.EOT_MODEL_REPO }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Install (pinned versions from uv.lock)
+        run: uv sync --frozen
+      - name: Lint
+        run: uv run ruff check .
+      - name: Pipeline definition is valid
+        run: uv run dvc stage list
+      - name: Fetch the published model
+        if: env.EOT_MODEL_REPO != ''
+        run: uv run hf download "$EOT_MODEL_REPO" --local-dir src/indic_eot/assets
+      - name: Tests
+        run: uv run pytest -q
+
+  image:
+    name: Build and start the service image
+    runs-on: ubuntu-latest
+    env:
+      EOT_MODEL_REPO: ${{ vars.EOT_MODEL_REPO }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: docker build -t indic-eot .
+      - name: Start it and call the API
+        if: env.EOT_MODEL_REPO != ''
+        run: |
+          docker run -d --name eot -p 7860:7860 -e EOT_MODEL_REPO indic-eot
+          for attempt in $(seq 1 30); do
+            curl -fs localhost:7860/health && break
+            sleep 2
+          done
+          curl -fs localhost:7860/health
+          # One second of silence as raw 32-bit floats.
+          head -c 64000 /dev/zero > silence.f32
+          curl -fs -X POST localhost:7860/predict \
+            -H "Content-Type: application/octet-stream" --data-binary @silence.f32
+          docker logs eot

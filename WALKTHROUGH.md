@@ -218,6 +218,26 @@ The model now beats a 500 ms timeout on both measures and matches a 700 ms timeo
 
 The export is exact, and a decision costs about 22 ms, well under the 100 ms budget. The exported model is audio-only; the text model is 465 MB and is not part of the product for now.
 
+## Step 15: A website, a service, and CI/CD
+
+**What**:
+- [src/indic_eot/service/app.py](src/indic_eot/service/app.py): a small web service. `POST /predict` takes audio and returns the probability; `GET /health` reports which model is loaded; `GET /` serves the website.
+- [src/indic_eot/service/static/index.html](src/indic_eot/service/static/index.html): the product website (working name "Viraam"). It has a live microphone demo, the measured results including the comparison the model loses, and API examples.
+- [Dockerfile](Dockerfile): packages the service into an image with no PyTorch inside.
+- [scripts/publish_model.py](scripts/publish_model.py) and [scripts/deploy_space.py](scripts/deploy_space.py): publish the model to a Hugging Face model repo, and deploy the service to a Hugging Face Space (free hosting).
+- [.github/workflows/ci.yml](.github/workflows/ci.yml) and [.github/workflows/deploy.yml](.github/workflows/deploy.yml): CI and CD.
+
+**Why the dependencies were split**: `pyproject.toml` now has three sets. The core (numpy, onnxruntime) is enough to run the model. `serve` adds the web service. `train` holds PyTorch, DVC, MLflow and the rest, and is only needed to build the model. The deployed service installs the first two, which keeps it small.
+
+**Why the model is not inside the image**: code and model change at different times and for different reasons. The service downloads the model from a model repo when it starts. Retraining then means "publish a new model and restart", with no code release. A code fix means "deploy", with no retraining.
+
+**How the demo works**: the page listens to the microphone and measures loudness in 20 ms steps. When you have been quiet for 200 ms it sends the speech so far to `/predict`. If the model is confident you finished, the agent "replies"; if not, it keeps waiting, up to 1,500 ms. Each pause is logged next to what a fixed 700 ms timer would have done.
+
+**What CI/CD means here**:
+- CI (continuous integration): on every push, GitHub runs the linter and tests and builds the Docker image. A broken change is caught before it is merged.
+- CD (continuous deployment): on every push to `main`, if CI passed, GitHub deploys the service to the Space and waits until it answers.
+- Both are skipped safely until the repository is on GitHub and the settings listed in `deploy.yml` are filled in.
+
 ## Where the project stands
 
 **What works**

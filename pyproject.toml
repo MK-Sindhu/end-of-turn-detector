@@ -4,8 +4,25 @@ version = "0.1.0"
 description = "End-of-turn detection for Indian and code-switched speech"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
-dependencies = [
-    "numpy",
+# Core: all that is needed to RUN the exported model.
+dependencies = ["numpy", "onnxruntime"]
+
+[project.optional-dependencies]
+# The web service (what gets deployed).
+serve = [
+    "fastapi",
+    "uvicorn",
+    "python-multipart",
+    "soundfile",
+    "scipy",
+    "huggingface_hub",
+]
+
+[dependency-groups]
+dev = ["pytest", "ruff", "httpx"]
+# Everything needed to build the dataset and train. Installed by default with
+# `uv sync`, left out of the deployed service.
+train = [
     "scipy",
     "soundfile",
     "pyyaml",
@@ -15,15 +32,15 @@ dependencies = [
     "transformers",
     "datasets",
     "onnx",
-    "onnxruntime",
     "mlflow",
     "dvc",
     "torchaudio>=2.11.1",
     "uroman>=1.3.1.1",
+    "indic-eot[serve]",
 ]
 
-[dependency-groups]
-dev = ["pytest", "ruff"]
+[tool.uv]
+default-groups = ["dev", "train"]
 
 [build-system]
 requires = ["hatchling"]

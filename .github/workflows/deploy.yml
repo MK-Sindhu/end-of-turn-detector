@@ -1,0 +1,48 @@
+# CD: on every push to main, run CI, and if it passes, deploy the service.
+#
+# Needs, in the GitHub repository settings (Secrets and variables > Actions):
+#   secret    HF_TOKEN         a Hugging Face token with write access
+#   variable  HF_SPACE         for example yourname/indic-eot-demo
+#   variable  EOT_MODEL_REPO   for example yourname/indic-eot
+# Until HF_SPACE is set, the deploy job is skipped and only CI runs.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    name: Deploy to Hugging Face Space
+    needs: ci
+    if: vars.HF_SPACE != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install huggingface_hub
+      - name: Deploy
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: >
+          python scripts/deploy_space.py "${{ vars.HF_SPACE }}"
+          --model-repo "${{ vars.EOT_MODEL_REPO }}"
+          --message "Deploy ${{ github.sha }}"
+      - name: Wait for the new version to answer
+        run: |
+          host="$(echo "${{ vars.HF_SPACE }}" | tr '/_.' '---' | tr '[:upper:]' '[:lower:]').hf.space"
+          for attempt in $(seq 1 60); do
+            if curl -fs "https://$host/health"; then exit 0; fi
+            sleep 10
+          done
+          echo "The Space did not come up within 10 minutes" && exit 1
