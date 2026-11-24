@@ -9,10 +9,10 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-The live demo calls the detector's API. Start that service from the detector project:
+The live demo calls the detector's API. Start that service from the repository root (one folder up):
 
 ```bash
-cd ../End-of-turn-detector
+cd ..
 uv run uvicorn indic_eot.service.app:app --port 7861
 ```
 
@@ -23,4 +23,4 @@ uv run uvicorn indic_eot.service.app:app --port 7861
 
 ## Deploy
 
-The site is static and has no server code of its own. On Vercel: import the repository and add `NEXT_PUBLIC_EOT_API` as an environment variable.
+The site is static and has no server code of its own. On Vercel: import the repository, set **Root Directory** to `website`, and add `NEXT_PUBLIC_EOT_API` as an environment variable.
