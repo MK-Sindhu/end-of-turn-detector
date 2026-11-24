@@ -66,3 +66,8 @@ streaming:
   hesitation:                # ASSUMED lengths of mid-sentence thinking pauses
     median_ms: 500
     sigma: 0.6               # spread (log-normal): about 12% of pauses exceed 1 s
+
+baselines:
+  smart_turn:                       # existing open audio turn detector (BSD-2)
+    repo: pipecat-ai/smart-turn-v3
+    file: smart-turn-v3.2-gpu.onnx  # the full-precision version (32 MB)

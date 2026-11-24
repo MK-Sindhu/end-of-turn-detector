@@ -155,12 +155,34 @@ Agent behaviour, pause lengths as recorded (406 recordings):
 
 The model now beats a 500 ms timeout on both measures and matches a 700 ms timeout with about 260 ms less delay. It cannot match a 1,000 ms timeout's low cut-off rate.
 
+## Step 12: Compare with an existing detector
+
+**What**: [scripts/baseline_smart_turn.py](scripts/baseline_smart_turn.py) runs Smart Turn v3.2, an open audio turn detector from Pipecat, on exactly the same decision points. The code that builds those points moved to [src/indic_eot/streaming.py](src/indic_eot/streaming.py) so that every model is given identical audio.
+
+**Why**: on its own, "42% of comma pauses called complete" cannot be judged. A reader needs to know how an established model does on the same audio. Smart Turn has the same shape as our audio model (Whisper-tiny encoder, last 8 seconds) but was trained on far more data in 23 languages, Hindi included.
+
+**Learned** (threshold 0.5, unedited test recordings):
+
+| Model | True ends called complete (406) | Pauses wrongly called complete (1,320) | Recordings cut off | Mean delay |
+|---|---|---|---|---|
+| Ours: audio | 98.3% | 23.8% | 46.8% | 218 ms |
+| Ours: fusion | 96.1% | 15.2% | 38.2% | 241 ms |
+| Smart Turn v3.2 | 75.9% | 20.8% | 46.1% | 556 ms |
+
+- On pauses, Smart Turn and our audio model are close (21% against 24%). So pauses at commas are hard for an established model too, not a flaw peculiar to ours.
+- Smart Turn misses about a quarter of the true ends, so it falls back to the long wait more often and responds more slowly.
+
+**This comparison is not fair to Smart Turn, and must not be read as "ours is better".** Our models were trained on the training split of this same corpus: same recording style, same kind of sentences. Smart Turn has never seen it. The fair reverse test is to run our models on Smart Turn's own published test set, where we would be the outsider.
+
+**Not included**: LiveKit's turn detector. Its licence allows use only inside the LiveKit Agents framework, not standalone, so it was not run.
+
 ## Where the project stands
 
 **What works**
 - A reproducible pipeline: one command (`uv run dvc repro`) rebuilds everything from download to plot.
 - An evaluation on unedited recordings that measures agent behaviour, not just clip accuracy.
 - A fusion model that beats short silence timeouts.
+- On this corpus, pause errors comparable to an established open detector, with faster responses (an in-domain comparison; see step 12).
 
 **What limits it**
 - Pauses at commas: the model still calls 42% of them complete.
@@ -171,7 +193,7 @@ The model now beats a 500 ms timeout on both measures and matches a 700 ms timeo
 - Nothing has been tested on real recordings of people hesitating.
 
 **What comes next**
-1. Compare with existing open detectors (Pipecat's smart-turn, LiveKit's turn detector) on the same decision points.
+1. The reverse comparison: run our models on Smart Turn's published test set, where our models are the outsider.
 2. A smarter policy that waits a middling time when the model is unsure.
 3. A larger encoder and more Hindi data; then more languages and Hinglish.
 4. Export to ONNX, package as `indic_eot`, measure speed.

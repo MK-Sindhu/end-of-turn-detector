@@ -311,12 +311,16 @@ stages:
       nfiles: 4
     - path: scripts/stream_points.py
       hash: md5
-      md5: a920b9c9b5cc54eb98469faee36d81e6
-      size: 6065
+      md5: b0a6ae9de404ed1e7c115b31197b1ff5
+      size: 3629
     - path: src/indic_eot/audio_model.py
       hash: md5
       md5: 3f431424148d881145e213f298b6ffae
       size: 4139
+    - path: src/indic_eot/streaming.py
+      hash: md5
+      md5: 2daf700a348a8de02b7fa9da92dc11c1
+      size: 3157
     - path: src/indic_eot/text_model.py
       hash: md5
       md5: f0d57a6e36f213f8cc609d8d35525616
@@ -345,14 +349,18 @@ stages:
   simulate:
     cmd: python scripts/simulate.py
     deps:
+    - path: results/baseline_points.csv
+      hash: md5
+      md5: 117dc543fbe97eec56b855100b354a55
+      size: 189447
     - path: results/stream_points.csv
       hash: md5
       md5: b10c026960e9eeadd32ce730521b89bb
       size: 246823
     - path: scripts/simulate.py
       hash: md5
-      md5: bea6b328f2d7d1e43ed8d729832de925
-      size: 11138
+      md5: 4afbe8e0382f10c1a87286c7a1711064
+      size: 11799
     params:
       params.yaml:
         seed: 42
@@ -375,9 +383,50 @@ stages:
     outs:
     - path: results/streaming_metrics.json
       hash: md5
-      md5: a553fcb297e06913075b6383412e05bf
-      size: 74253
+      md5: 6a7b3ae70992334a0c70cc93d5779e75
+      size: 97942
     - path: results/streaming_tradeoff.png
       hash: md5
-      md5: 1344e8bb14cd47c3f2c6a20ffd39de29
-      size: 158605
+      md5: 1c312cf35466ec9fe4782c2ea3a939d4
+      size: 181315
+  baseline_smart_turn:
+    cmd: python scripts/baseline_smart_turn.py
+    deps:
+    - path: data/interim/alignments.jsonl
+      hash: md5
+      md5: 6221cc7cabdd744dc8605b165232c61a
+      size: 6149520
+    - path: data/raw/fleurs
+      hash: md5
+      md5: aa290d161ee97ede9c8900f7c0b740e7.dir
+      size: 2008180239
+      nfiles: 2778
+    - path: scripts/baseline_smart_turn.py
+      hash: md5
+      md5: 9156d370c46372d2a2ea3e34374583c6
+      size: 3170
+    - path: src/indic_eot/streaming.py
+      hash: md5
+      md5: 2daf700a348a8de02b7fa9da92dc11c1
+      size: 3157
+    params:
+      params.yaml:
+        audio.sample_rate: 16000
+        baselines.smart_turn:
+          repo: pipecat-ai/smart-turn-v3
+          file: smart-turn-v3.2-gpu.onnx
+        dataset.min_align_score: 0.7
+        dataset.min_words: 6
+        dataset.splits:
+          train:
+          - train
+          val:
+          - dev
+          test:
+          - test
+        streaming.min_silence_ms: 200
+    outs:
+    - path: results/baseline_points.csv
+      hash: md5
+      md5: 117dc543fbe97eec56b855100b354a55
+      size: 189447

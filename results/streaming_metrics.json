@@ -75,6 +75,24 @@
         "points": 1035,
         "called_complete": 0.0783
       }
+    },
+    "smart_turn": {
+      "ends": {
+        "points": 406,
+        "called_complete": 0.7586
+      },
+      "pauses": {
+        "points": 1320,
+        "called_complete": 0.2076
+      },
+      "pauses_after_punctuation": {
+        "points": 285,
+        "called_complete": 0.4386
+      },
+      "pauses_mid_clause": {
+        "points": 1035,
+        "called_complete": 0.144
+      }
     }
   },
   "as_recorded": {
@@ -1322,6 +1340,400 @@
           "mean_delay_ms": 1500.0,
           "median_delay_ms": 1500.0
         }
+      ],
+      "smart_turn": [
+        {
+          "threshold": 0.02,
+          "false_cutoff_rate": 0.766,
+          "false_cutoffs": 311,
+          "recordings": 406,
+          "mean_delay_ms": 227.4,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.04,
+          "false_cutoff_rate": 0.7167,
+          "false_cutoffs": 291,
+          "recordings": 406,
+          "mean_delay_ms": 279.1,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.06,
+          "false_cutoff_rate": 0.6921,
+          "false_cutoffs": 281,
+          "recordings": 406,
+          "mean_delay_ms": 304.0,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.08,
+          "false_cutoff_rate": 0.6798,
+          "false_cutoffs": 276,
+          "recordings": 406,
+          "mean_delay_ms": 320.0,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.1,
+          "false_cutoff_rate": 0.6453,
+          "false_cutoffs": 262,
+          "recordings": 406,
+          "mean_delay_ms": 344.4,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.12,
+          "false_cutoff_rate": 0.6207,
+          "false_cutoffs": 252,
+          "recordings": 406,
+          "mean_delay_ms": 377.3,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.14,
+          "false_cutoff_rate": 0.5985,
+          "false_cutoffs": 243,
+          "recordings": 406,
+          "mean_delay_ms": 375.5,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.16,
+          "false_cutoff_rate": 0.5936,
+          "false_cutoffs": 241,
+          "recordings": 406,
+          "mean_delay_ms": 397.0,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.18,
+          "false_cutoff_rate": 0.5837,
+          "false_cutoffs": 237,
+          "recordings": 406,
+          "mean_delay_ms": 415.4,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.2,
+          "false_cutoff_rate": 0.5813,
+          "false_cutoffs": 236,
+          "recordings": 406,
+          "mean_delay_ms": 429.4,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.22,
+          "false_cutoff_rate": 0.564,
+          "false_cutoffs": 229,
+          "recordings": 406,
+          "mean_delay_ms": 427.7,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.24,
+          "false_cutoff_rate": 0.564,
+          "false_cutoffs": 229,
+          "recordings": 406,
+          "mean_delay_ms": 449.7,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.26,
+          "false_cutoff_rate": 0.5542,
+          "false_cutoffs": 225,
+          "recordings": 406,
+          "mean_delay_ms": 465.7,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.28,
+          "false_cutoff_rate": 0.5493,
+          "false_cutoffs": 223,
+          "recordings": 406,
+          "mean_delay_ms": 477.0,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.3,
+          "false_cutoff_rate": 0.5345,
+          "false_cutoffs": 217,
+          "recordings": 406,
+          "mean_delay_ms": 475.1,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.32,
+          "false_cutoff_rate": 0.5246,
+          "false_cutoffs": 213,
+          "recordings": 406,
+          "mean_delay_ms": 489.6,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.34,
+          "false_cutoff_rate": 0.5197,
+          "false_cutoffs": 211,
+          "recordings": 406,
+          "mean_delay_ms": 486.7,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.36,
+          "false_cutoff_rate": 0.5123,
+          "false_cutoffs": 208,
+          "recordings": 406,
+          "mean_delay_ms": 488.9,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.38,
+          "false_cutoff_rate": 0.5099,
+          "false_cutoffs": 207,
+          "recordings": 406,
+          "mean_delay_ms": 494.0,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.4,
+          "false_cutoff_rate": 0.5025,
+          "false_cutoffs": 204,
+          "recordings": 406,
+          "mean_delay_ms": 508.9,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.42,
+          "false_cutoff_rate": 0.4975,
+          "false_cutoffs": 202,
+          "recordings": 406,
+          "mean_delay_ms": 518.6,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.44,
+          "false_cutoff_rate": 0.4951,
+          "false_cutoffs": 201,
+          "recordings": 406,
+          "mean_delay_ms": 517.1,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.46,
+          "false_cutoff_rate": 0.4828,
+          "false_cutoffs": 196,
+          "recordings": 406,
+          "mean_delay_ms": 521.9,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.48,
+          "false_cutoff_rate": 0.4704,
+          "false_cutoffs": 191,
+          "recordings": 406,
+          "mean_delay_ms": 526.5,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.5,
+          "false_cutoff_rate": 0.4606,
+          "false_cutoffs": 187,
+          "recordings": 406,
+          "mean_delay_ms": 556.2,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.52,
+          "false_cutoff_rate": 0.4606,
+          "false_cutoffs": 187,
+          "recordings": 406,
+          "mean_delay_ms": 568.0,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.54,
+          "false_cutoff_rate": 0.4581,
+          "false_cutoffs": 186,
+          "recordings": 406,
+          "mean_delay_ms": 572.3,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.56,
+          "false_cutoff_rate": 0.4483,
+          "false_cutoffs": 182,
+          "recordings": 406,
+          "mean_delay_ms": 594.6,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.58,
+          "false_cutoff_rate": 0.4409,
+          "false_cutoffs": 179,
+          "recordings": 406,
+          "mean_delay_ms": 606.6,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.6,
+          "false_cutoff_rate": 0.4335,
+          "false_cutoffs": 176,
+          "recordings": 406,
+          "mean_delay_ms": 629.6,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.62,
+          "false_cutoff_rate": 0.4335,
+          "false_cutoffs": 176,
+          "recordings": 406,
+          "mean_delay_ms": 646.5,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.64,
+          "false_cutoff_rate": 0.4335,
+          "false_cutoffs": 176,
+          "recordings": 406,
+          "mean_delay_ms": 652.2,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.66,
+          "false_cutoff_rate": 0.4236,
+          "false_cutoffs": 172,
+          "recordings": 406,
+          "mean_delay_ms": 650.0,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.68,
+          "false_cutoff_rate": 0.4163,
+          "false_cutoffs": 169,
+          "recordings": 406,
+          "mean_delay_ms": 666.2,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.7,
+          "false_cutoff_rate": 0.4138,
+          "false_cutoffs": 168,
+          "recordings": 406,
+          "mean_delay_ms": 675.2,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.72,
+          "false_cutoff_rate": 0.4138,
+          "false_cutoffs": 168,
+          "recordings": 406,
+          "mean_delay_ms": 691.6,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.74,
+          "false_cutoff_rate": 0.4089,
+          "false_cutoffs": 166,
+          "recordings": 406,
+          "mean_delay_ms": 692.9,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.76,
+          "false_cutoff_rate": 0.3941,
+          "false_cutoffs": 160,
+          "recordings": 406,
+          "mean_delay_ms": 691.5,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.78,
+          "false_cutoff_rate": 0.3818,
+          "false_cutoffs": 155,
+          "recordings": 406,
+          "mean_delay_ms": 686.9,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.8,
+          "false_cutoff_rate": 0.3645,
+          "false_cutoffs": 148,
+          "recordings": 406,
+          "mean_delay_ms": 708.9,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.82,
+          "false_cutoff_rate": 0.3498,
+          "false_cutoffs": 142,
+          "recordings": 406,
+          "mean_delay_ms": 736.7,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.84,
+          "false_cutoff_rate": 0.3251,
+          "false_cutoffs": 132,
+          "recordings": 406,
+          "mean_delay_ms": 745.6,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.86,
+          "false_cutoff_rate": 0.3153,
+          "false_cutoffs": 128,
+          "recordings": 406,
+          "mean_delay_ms": 770.5,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.88,
+          "false_cutoff_rate": 0.303,
+          "false_cutoffs": 123,
+          "recordings": 406,
+          "mean_delay_ms": 783.4,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.9,
+          "false_cutoff_rate": 0.2956,
+          "false_cutoffs": 120,
+          "recordings": 406,
+          "mean_delay_ms": 804.5,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.92,
+          "false_cutoff_rate": 0.2734,
+          "false_cutoffs": 111,
+          "recordings": 406,
+          "mean_delay_ms": 834.6,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.94,
+          "false_cutoff_rate": 0.2463,
+          "false_cutoffs": 100,
+          "recordings": 406,
+          "mean_delay_ms": 888.2,
+          "median_delay_ms": 1500.0
+        },
+        {
+          "threshold": 0.96,
+          "false_cutoff_rate": 0.202,
+          "false_cutoffs": 82,
+          "recordings": 406,
+          "mean_delay_ms": 954.3,
+          "median_delay_ms": 1500.0
+        },
+        {
+          "threshold": 0.98,
+          "false_cutoff_rate": 0.1404,
+          "false_cutoffs": 57,
+          "recordings": 406,
+          "mean_delay_ms": 1108.9,
+          "median_delay_ms": 1500.0
+        }
       ]
     },
     "operating_points": {
@@ -1436,6 +1848,44 @@
           "ci95": [
             0.1552,
             0.2315
+          ]
+        }
+      ],
+      "smart_turn": [
+        {
+          "threshold": 0.5,
+          "false_cutoff_rate": 0.4606,
+          "false_cutoffs": 187,
+          "recordings": 406,
+          "mean_delay_ms": 556.2,
+          "median_delay_ms": 200.0,
+          "ci95": [
+            0.4089,
+            0.5075
+          ]
+        },
+        {
+          "threshold": 0.7,
+          "false_cutoff_rate": 0.4138,
+          "false_cutoffs": 168,
+          "recordings": 406,
+          "mean_delay_ms": 675.2,
+          "median_delay_ms": 200.0,
+          "ci95": [
+            0.3645,
+            0.4631
+          ]
+        },
+        {
+          "threshold": 0.9,
+          "false_cutoff_rate": 0.2956,
+          "false_cutoffs": 120,
+          "recordings": 406,
+          "mean_delay_ms": 804.5,
+          "median_delay_ms": 200.0,
+          "ci95": [
+            0.2512,
+            0.34
           ]
         }
       ]
@@ -2686,6 +3136,400 @@
           "mean_delay_ms": 1500.0,
           "median_delay_ms": 1500.0
         }
+      ],
+      "smart_turn": [
+        {
+          "threshold": 0.02,
+          "false_cutoff_rate": 0.7709,
+          "false_cutoffs": 313,
+          "recordings": 406,
+          "mean_delay_ms": 214.0,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.04,
+          "false_cutoff_rate": 0.7266,
+          "false_cutoffs": 295,
+          "recordings": 406,
+          "mean_delay_ms": 270.3,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.06,
+          "false_cutoff_rate": 0.7094,
+          "false_cutoffs": 288,
+          "recordings": 406,
+          "mean_delay_ms": 299.2,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.08,
+          "false_cutoff_rate": 0.6995,
+          "false_cutoffs": 284,
+          "recordings": 406,
+          "mean_delay_ms": 317.2,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.1,
+          "false_cutoff_rate": 0.6675,
+          "false_cutoffs": 271,
+          "recordings": 406,
+          "mean_delay_ms": 334.8,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.12,
+          "false_cutoff_rate": 0.6453,
+          "false_cutoffs": 262,
+          "recordings": 406,
+          "mean_delay_ms": 371.5,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.14,
+          "false_cutoff_rate": 0.6256,
+          "false_cutoffs": 254,
+          "recordings": 406,
+          "mean_delay_ms": 371.1,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.16,
+          "false_cutoff_rate": 0.6207,
+          "false_cutoffs": 252,
+          "recordings": 406,
+          "mean_delay_ms": 394.2,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.18,
+          "false_cutoff_rate": 0.6133,
+          "false_cutoffs": 249,
+          "recordings": 406,
+          "mean_delay_ms": 415.3,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.2,
+          "false_cutoff_rate": 0.6108,
+          "false_cutoffs": 248,
+          "recordings": 406,
+          "mean_delay_ms": 430.4,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.22,
+          "false_cutoff_rate": 0.5936,
+          "false_cutoffs": 241,
+          "recordings": 406,
+          "mean_delay_ms": 428.5,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.24,
+          "false_cutoff_rate": 0.5936,
+          "false_cutoffs": 241,
+          "recordings": 406,
+          "mean_delay_ms": 452.1,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.26,
+          "false_cutoff_rate": 0.5837,
+          "false_cutoffs": 237,
+          "recordings": 406,
+          "mean_delay_ms": 469.2,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.28,
+          "false_cutoff_rate": 0.5788,
+          "false_cutoffs": 235,
+          "recordings": 406,
+          "mean_delay_ms": 481.3,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.3,
+          "false_cutoff_rate": 0.564,
+          "false_cutoffs": 229,
+          "recordings": 406,
+          "mean_delay_ms": 479.1,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.32,
+          "false_cutoff_rate": 0.5542,
+          "false_cutoffs": 225,
+          "recordings": 406,
+          "mean_delay_ms": 494.5,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.34,
+          "false_cutoff_rate": 0.5493,
+          "false_cutoffs": 223,
+          "recordings": 406,
+          "mean_delay_ms": 491.3,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.36,
+          "false_cutoff_rate": 0.5419,
+          "false_cutoffs": 220,
+          "recordings": 406,
+          "mean_delay_ms": 493.5,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.38,
+          "false_cutoff_rate": 0.5394,
+          "false_cutoffs": 219,
+          "recordings": 406,
+          "mean_delay_ms": 498.9,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.4,
+          "false_cutoff_rate": 0.532,
+          "false_cutoffs": 216,
+          "recordings": 406,
+          "mean_delay_ms": 514.7,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.42,
+          "false_cutoff_rate": 0.5271,
+          "false_cutoffs": 214,
+          "recordings": 406,
+          "mean_delay_ms": 525.0,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.44,
+          "false_cutoff_rate": 0.5246,
+          "false_cutoffs": 213,
+          "recordings": 406,
+          "mean_delay_ms": 523.3,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.46,
+          "false_cutoff_rate": 0.5148,
+          "false_cutoffs": 209,
+          "recordings": 406,
+          "mean_delay_ms": 523.4,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.48,
+          "false_cutoff_rate": 0.5049,
+          "false_cutoffs": 205,
+          "recordings": 406,
+          "mean_delay_ms": 529.9,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.5,
+          "false_cutoff_rate": 0.4951,
+          "false_cutoffs": 201,
+          "recordings": 406,
+          "mean_delay_ms": 561.5,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.52,
+          "false_cutoff_rate": 0.4951,
+          "false_cutoffs": 201,
+          "recordings": 406,
+          "mean_delay_ms": 574.1,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.54,
+          "false_cutoff_rate": 0.4926,
+          "false_cutoffs": 200,
+          "recordings": 406,
+          "mean_delay_ms": 578.6,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.56,
+          "false_cutoff_rate": 0.4828,
+          "false_cutoffs": 196,
+          "recordings": 406,
+          "mean_delay_ms": 602.4,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.58,
+          "false_cutoff_rate": 0.4803,
+          "false_cutoffs": 195,
+          "recordings": 406,
+          "mean_delay_ms": 619.0,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.6,
+          "false_cutoff_rate": 0.4729,
+          "false_cutoffs": 192,
+          "recordings": 406,
+          "mean_delay_ms": 643.5,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.62,
+          "false_cutoff_rate": 0.4729,
+          "false_cutoffs": 192,
+          "recordings": 406,
+          "mean_delay_ms": 661.7,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.64,
+          "false_cutoff_rate": 0.4729,
+          "false_cutoffs": 192,
+          "recordings": 406,
+          "mean_delay_ms": 667.8,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.66,
+          "false_cutoff_rate": 0.4655,
+          "false_cutoffs": 189,
+          "recordings": 406,
+          "mean_delay_ms": 667.3,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.68,
+          "false_cutoff_rate": 0.4606,
+          "false_cutoffs": 187,
+          "recordings": 406,
+          "mean_delay_ms": 686.8,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.7,
+          "false_cutoff_rate": 0.4606,
+          "false_cutoffs": 187,
+          "recordings": 406,
+          "mean_delay_ms": 692.7,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.72,
+          "false_cutoff_rate": 0.4606,
+          "false_cutoffs": 187,
+          "recordings": 406,
+          "mean_delay_ms": 704.6,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.74,
+          "false_cutoff_rate": 0.4557,
+          "false_cutoffs": 185,
+          "recordings": 406,
+          "mean_delay_ms": 705.9,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.76,
+          "false_cutoff_rate": 0.4409,
+          "false_cutoffs": 179,
+          "recordings": 406,
+          "mean_delay_ms": 704.0,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.78,
+          "false_cutoff_rate": 0.431,
+          "false_cutoffs": 175,
+          "recordings": 406,
+          "mean_delay_ms": 700.9,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.8,
+          "false_cutoff_rate": 0.4163,
+          "false_cutoffs": 169,
+          "recordings": 406,
+          "mean_delay_ms": 721.1,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.82,
+          "false_cutoff_rate": 0.4015,
+          "false_cutoffs": 163,
+          "recordings": 406,
+          "mean_delay_ms": 745.7,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.84,
+          "false_cutoff_rate": 0.3867,
+          "false_cutoffs": 157,
+          "recordings": 406,
+          "mean_delay_ms": 753.4,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.86,
+          "false_cutoff_rate": 0.3793,
+          "false_cutoffs": 154,
+          "recordings": 406,
+          "mean_delay_ms": 777.8,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.88,
+          "false_cutoff_rate": 0.3695,
+          "false_cutoffs": 150,
+          "recordings": 406,
+          "mean_delay_ms": 773.8,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.9,
+          "false_cutoff_rate": 0.3621,
+          "false_cutoffs": 147,
+          "recordings": 406,
+          "mean_delay_ms": 797.3,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.92,
+          "false_cutoff_rate": 0.3448,
+          "false_cutoffs": 140,
+          "recordings": 406,
+          "mean_delay_ms": 825.6,
+          "median_delay_ms": 200.0
+        },
+        {
+          "threshold": 0.94,
+          "false_cutoff_rate": 0.3202,
+          "false_cutoffs": 130,
+          "recordings": 406,
+          "mean_delay_ms": 883.0,
+          "median_delay_ms": 1500.0
+        },
+        {
+          "threshold": 0.96,
+          "false_cutoff_rate": 0.2783,
+          "false_cutoffs": 113,
+          "recordings": 406,
+          "mean_delay_ms": 949.8,
+          "median_delay_ms": 1500.0
+        },
+        {
+          "threshold": 0.98,
+          "false_cutoff_rate": 0.2241,
+          "false_cutoffs": 91,
+          "recordings": 406,
+          "mean_delay_ms": 1091.4,
+          "median_delay_ms": 1500.0
+        }
       ]
     },
     "operating_points": {
@@ -2800,6 +3644,44 @@
           "ci95": [
             0.2241,
             0.3103
+          ]
+        }
+      ],
+      "smart_turn": [
+        {
+          "threshold": 0.5,
+          "false_cutoff_rate": 0.4951,
+          "false_cutoffs": 201,
+          "recordings": 406,
+          "mean_delay_ms": 561.5,
+          "median_delay_ms": 200.0,
+          "ci95": [
+            0.4458,
+            0.5443
+          ]
+        },
+        {
+          "threshold": 0.7,
+          "false_cutoff_rate": 0.4606,
+          "false_cutoffs": 187,
+          "recordings": 406,
+          "mean_delay_ms": 692.7,
+          "median_delay_ms": 200.0,
+          "ci95": [
+            0.4089,
+            0.5099
+          ]
+        },
+        {
+          "threshold": 0.9,
+          "false_cutoff_rate": 0.3621,
+          "false_cutoffs": 147,
+          "recordings": 406,
+          "mean_delay_ms": 797.3,
+          "median_delay_ms": 200.0,
+          "ci95": [
+            0.3128,
+            0.4113
           ]
         }
       ]

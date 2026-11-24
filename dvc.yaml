@@ -120,6 +120,7 @@ stages:
     cmd: python scripts/stream_points.py
     deps:
       - scripts/stream_points.py
+      - src/indic_eot/streaming.py
       - src/indic_eot/audio_model.py
       - src/indic_eot/text_model.py
       - data/interim/alignments.jsonl
@@ -137,11 +138,29 @@ stages:
     outs:
       - results/stream_points.csv
 
+  baseline_smart_turn:
+    cmd: python scripts/baseline_smart_turn.py
+    deps:
+      - scripts/baseline_smart_turn.py
+      - src/indic_eot/streaming.py
+      - data/interim/alignments.jsonl
+      - data/raw/fleurs
+    params:
+      - audio.sample_rate
+      - baselines.smart_turn
+      - dataset.splits
+      - dataset.min_words
+      - dataset.min_align_score
+      - streaming.min_silence_ms
+    outs:
+      - results/baseline_points.csv
+
   simulate:
     cmd: python scripts/simulate.py
     deps:
       - scripts/simulate.py
       - results/stream_points.csv
+      - results/baseline_points.csv
     params:
       - seed
       - streaming

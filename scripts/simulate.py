@@ -49,16 +49,31 @@ from indic_eot.config import REPO_ROOT, load_params
 POINTS_FILE = REPO_ROOT / "results" / "stream_points.csv"
 METRICS_FILE = REPO_ROOT / "results" / "streaming_metrics.json"
 PLOT_FILE = REPO_ROOT / "results" / "streaming_tradeoff.png"
-MODELS = ("audio", "text", "fusion")
+BASELINE_FILE = REPO_ROOT / "results" / "baseline_points.csv"
+MODELS = ("audio", "text", "fusion", "smart_turn")
+LABELS = {
+    "audio": "ours: audio",
+    "text": "ours: text",
+    "fusion": "ours: fusion",
+    "smart_turn": "Smart Turn v3.2 (existing)",
+}
 
 
 def load_utterances(split: str) -> list[dict]:
     """Group decision points by recording: {"pauses": [...], "end": {...}}."""
+    # The outside baseline was scored on the same points; look its scores up
+    # by (recording, kind, word).
+    with open(BASELINE_FILE) as f:
+        baseline = {
+            (r["utterance"], r["kind"], r["word_index"]): r["p_smart_turn"]
+            for r in csv.DictReader(f)
+        }
     grouped = defaultdict(lambda: {"pauses": [], "end": None})
     with open(POINTS_FILE) as f:
         for row in csv.DictReader(f):
             if row["split"] != split:
                 continue
+            row["p_smart_turn"] = baseline[(row["utterance"], row["kind"], row["word_index"])]
             point = {
                 "word_index": int(row["word_index"]),
                 "gap_ms": int(row["gap_ms"]),
@@ -215,14 +230,14 @@ def main() -> None:
                 xytext=(6, 6),
                 fontsize=8,
             )
-        for model, colour in zip(MODELS, ("tab:blue", "tab:orange", "tab:green")):
+        for model, colour in zip(MODELS, ("tab:blue", "tab:orange", "tab:green", "tab:red")):
             curve = [r for r in result["model_gated"][model] if r["mean_delay_ms"] is not None]
             ax.plot(
                 [r["mean_delay_ms"] for r in curve],
                 [100 * r["false_cutoff_rate"] for r in curve],
-                "-",
                 color=colour,
-                label=f"{model} model + {cfg['min_silence_ms']} ms",
+                linestyle="--" if model == "smart_turn" else "-",
+                label=f"{LABELS[model]} + {cfg['min_silence_ms']} ms",
             )
         ax.set_title(variant.replace("_", " "))
         ax.set_xlabel("mean response delay after the user finishes (ms)")
@@ -245,7 +260,7 @@ def main() -> None:
     )
     for model, d in report["per_decision"].items():
         print(
-            f"{model:8} {100 * d['ends']['called_complete']:9.1f}% {100 * d['pauses']['called_complete']:10.1f}% "
+            f"{model:11} {100 * d['ends']['called_complete']:9.1f}% {100 * d['pauses']['called_complete']:10.1f}% "
             f"{100 * d['pauses_after_punctuation']['called_complete']:22.1f}% "
             f"{100 * d['pauses_mid_clause']['called_complete']:17.1f}%"
         )
@@ -260,7 +275,7 @@ def main() -> None:
         for model in MODELS:
             for row in report[variant]["operating_points"][model]:
                 print(
-                    f"{model + ' model, threshold ' + str(row['threshold']):28} "
+                    f"{model + ', threshold ' + str(row['threshold']):28} "
                     f"{100 * row['false_cutoff_rate']:12.1f}% {row['mean_delay_ms']:8.0f} ms"
                 )
 
