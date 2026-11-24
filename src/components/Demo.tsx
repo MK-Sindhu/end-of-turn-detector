@@ -332,7 +332,7 @@ export function Demo() {
   }, []);
 
   return (
-    <div className="demo">
+    <div className="demo card">
       <div className="demo-stage">
         <div className="demo-bar">
           <button className={`btn ${running ? "btn-line" : "btn-solid"}`} onClick={running ? stop : start}>
@@ -344,9 +344,9 @@ export function Demo() {
         </div>
         <canvas ref={canvasRef} className="strip strip-live" role="img" aria-label="Your speech as bars, with a mark at each pause the model judged" />
         <p className="legend">
-          <span className="k-wait">। keep waiting</span>
-          <span className="k-reply">। reply</span>
-          <span className="k-cut">। replied, but you carried on</span>
+          <span className="k-wait">● keep waiting</span>
+          <span className="k-reply">● reply</span>
+          <span className="k-cut">● replied, but you carried on</span>
         </p>
       </div>
 

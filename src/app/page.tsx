@@ -26,7 +26,7 @@ export default function Home() {
           <HeroStrip />
           <figcaption>
             <span lang="hi">मुझे कल शाम के लिए … दो टिकट चाहिए।</span>
-            “For tomorrow evening … I need two tickets.” One turn, with the pause every agent has to judge.
+            “For tomorrow evening … I need two tickets.” One turn, with the pause every agent has to judge (illustration).
           </figcaption>
         </figure>
       </section>

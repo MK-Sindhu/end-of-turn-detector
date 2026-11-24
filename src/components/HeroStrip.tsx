@@ -43,9 +43,9 @@ export function HeroStrip() {
       // 45 slots per second, then hold the finished picture before replaying.
       const cursor = still ? SLOTS : Math.min(SLOTS, (((now - started) / 1000) % 9) * 45);
       const marks: Mark[] = [];
-      if (cursor > pauseStart + 9) marks.push({ at: pauseStart + 9, kind: "wait", text: "200 ms · keep waiting" });
-      if (cursor > pauseStart + 31) marks.push({ at: pauseStart + 31, kind: "cut", text: "700 ms timer cuts in" });
-      if (cursor > end + 9) marks.push({ at: end + 9, kind: "reply", text: "200 ms · reply" });
+      if (cursor > pauseStart + 9) marks.push({ at: pauseStart + 9, kind: "wait", text: "9% finished · keep waiting" });
+      if (cursor > pauseStart + 31) marks.push({ at: pauseStart + 31, kind: "cut", text: "a 700 ms timer cuts in here" });
+      if (cursor > end + 9) marks.push({ at: end + 9, kind: "reply", text: "96% finished · reply" });
       void pauseEnd;
       drawStrip(size.g, size.width, size.height, levels.slice(0, Math.floor(cursor)), marks, colors, SLOTS);
       if (!still) frame = requestAnimationFrame(render);

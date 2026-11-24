@@ -56,8 +56,8 @@ export default function Viraam() {
           <p className="eyebrow">Live</p>
           <h2>Speak, pause, carry on<span className="danda" aria-hidden="true">।</span></h2>
           <p className="section-lede">
-            Say a sentence and stop in the middle to think. Your voice is drawn as bars. At each pause
-            the model leaves a mark: yellow to keep waiting, green to reply.
+            Say a sentence and stop in the middle to think. Your voice rises as a ribbon of lines. At each pause
+            the model leaves a tag: amber to keep waiting, green to reply.
           </p>
           <Demo />
           <p className="fine">
