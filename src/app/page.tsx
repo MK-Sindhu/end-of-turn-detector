@@ -1,69 +1,100 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Link from "next/link";
+import { Backdrop } from "@/components/Backdrop";
+import { Footer, Nav } from "@/components/Nav";
+import { site } from "@/lib/site";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
+    <>
+      <section className="hero hero-home">
+        <Backdrop variant="ember" />
+        <Nav />
+        <div className="hero-body">
+          <p className="eyebrow">Voice AI, built for how India speaks</p>
           <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
+            Voice agents that
+            <br />
+            know when to speak.
           </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="lede">
+            People pause to think. Most voice agents hear silence and jump in. {site.company} builds the
+            models and the tests that teach agents to wait for the end of the thought.
           </p>
+          <div className="actions">
+            <Link href="/viraam#demo" className="pill pill-light">Try it with your voice</Link>
+            <Link href="/viraam#results" className="pill pill-ghost">See the measurements</Link>
+          </div>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+      </section>
+
+      <main>
+        <section className="section" id="products">
+          <p className="eyebrow">Two projects</p>
+          <h2>One teaches the agent to listen. The other tries to break it.</h2>
+          <div className="products">
+            <Link href="/viraam" className="product glass">
+              <span className="tag tag-live">Live demo</span>
+              <h3>End-of-turn detector</h3>
+              <p>
+                A 10 MB model that hears a pause and answers one question: has the speaker finished, or
+                are they still thinking? Trained on Hindi, scored in about 22 ms on a single CPU core.
+              </p>
+              <p className="utterance" lang="hi">
+                मुझे कल शाम के लिए <span className="gap"><b>900 ms</b></span> दो टिकट चाहिए।
+              </p>
+              <span className="more">Open the detector →</span>
+            </Link>
+
+            <div className="product glass" id="arena">
+              <span className="tag">In development</span>
+              <h3>Stress-test arena</h3>
+              <p>
+                A scripted caller that holds real-time spoken conversations with a voice agent and sets
+                the traps real callers do: pausing mid-thought, interrupting, changing their mind,
+                reading out numbers over street noise. In Hindi, Hinglish and Indian English.
+              </p>
+              <ul className="traps">
+                <li>Mid-thought pauses</li>
+                <li>Barge-in</li>
+                <li>“Haan”, “hmm” while the agent talks</li>
+                <li>Numbers and addresses</li>
+                <li>Background noise</li>
+                <li>Change of mind</li>
+              </ul>
+              <span className="more muted">No results yet. The leaderboard will list only runs that happened.</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="section">
+          <p className="eyebrow">How the work is done</p>
+          <h2>Numbers you can check.</h2>
+          <div className="principles">
+            <div>
+              <h3>Tested the way it is used</h3>
+              <p>
+                The first model scored 95% on clips and still cut off half of all speakers. So the
+                headline test replays whole, unedited recordings and counts interruptions.
+              </p>
+            </div>
+            <div>
+              <h3>Losses are published</h3>
+              <p>
+                On another team&apos;s test set, their model beats ours by 17 to 19 points. That table is
+                on the product page, next to the one we win.
+              </p>
+            </div>
+            <div>
+              <h3>One command rebuilds it</h3>
+              <p>
+                Data, training, evaluation and export are a versioned pipeline. Every figure on this
+                site traces to a results file and the commit that produced it.
+              </p>
+            </div>
+          </div>
+        </section>
       </main>
-    </div>
+      <Footer />
+    </>
   );
 }
