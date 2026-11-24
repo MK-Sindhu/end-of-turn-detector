@@ -52,3 +52,11 @@ train_audio:
 
 mlflow:
   experiment: indic-eot
+
+train_text:
+  encoder: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2  # small multilingual transformer
+  epochs: 5
+  batch_size: 32
+  lr: 5.0e-5
+  weight_decay: 0.01
+  warmup_fraction: 0.1

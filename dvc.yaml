@@ -83,3 +83,23 @@ stages:
     metrics:
       - results/audio_metrics.json:
           cache: false
+
+  train_text:
+    cmd: python scripts/train_text.py
+    deps:
+      - scripts/train_text.py
+      - src/indic_eot/text_model.py
+      - src/indic_eot/evaluation.py
+      - src/indic_eot/training.py
+      - data/processed/eot
+    params:
+      - seed
+      - train_text
+      - shortcut_check.real_pause_ms
+      - shortcut_check.connected_speech_ms
+    outs:
+      - models/text
+      - results/text_predictions.csv
+    metrics:
+      - results/text_metrics.json:
+          cache: false

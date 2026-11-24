@@ -206,3 +206,53 @@ stages:
       hash: md5
       md5: d28df3bbff22d3b860bf2ada04a8c87a
       size: 116143
+  train_text:
+    cmd: python scripts/train_text.py
+    deps:
+    - path: data/processed/eot
+      hash: md5
+      md5: 4efa72dd0039e79b5a3ea046c2030688.dir
+      size: 1154244957
+      nfiles: 10963
+    - path: scripts/train_text.py
+      hash: md5
+      md5: 25488116004febfeaf8f023b9d85a73e
+      size: 6324
+    - path: src/indic_eot/evaluation.py
+      hash: md5
+      md5: b7fd1f53de6fc4f0ee95f22d465c74eb
+      size: 1259
+    - path: src/indic_eot/text_model.py
+      hash: md5
+      md5: f0d57a6e36f213f8cc609d8d35525616
+      size: 1782
+    - path: src/indic_eot/training.py
+      hash: md5
+      md5: 403b16d37b54d947d924848ccaee2532
+      size: 5190
+    params:
+      params.yaml:
+        seed: 42
+        shortcut_check.connected_speech_ms: 80
+        shortcut_check.real_pause_ms: 250
+        train_text:
+          encoder: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+          epochs: 5
+          batch_size: 32
+          lr: 5e-05
+          weight_decay: 0.01
+          warmup_fraction: 0.1
+    outs:
+    - path: models/text
+      hash: md5
+      md5: b69e2917153679163ee8c001578e6614.dir
+      size: 487724541
+      nfiles: 4
+    - path: results/text_metrics.json
+      hash: md5
+      md5: bd6d81d28cc33dcd98bda3e57760e451
+      size: 1036
+    - path: results/text_predictions.csv
+      hash: md5
+      md5: 3934dea7106ef1a1a34fa114eb6c4b26
+      size: 116143
