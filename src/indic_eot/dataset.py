@@ -62,6 +62,33 @@ def cut_candidates(words: list[dict], min_words_before: int, min_gap_s: float) -
     return [max(allowed, key=gap)] if allowed else []
 
 
+def choose_cuts(
+    words: list[dict],
+    candidates: list[int],
+    rng: np.random.Generator,
+    count: int,
+    pause_s: float,
+    pause_share: float,
+) -> list[int]:
+    """Pick cut points, deliberately favouring places where the speaker paused.
+
+    Most gaps between words are tiny, so picking at random gives few examples
+    of "the speaker really stopped for a moment, but was not finished". That is
+    the exact situation a voice agent has to get right, so with probability
+    pause_share each pick is taken from the real pauses (gap >= pause_s) when
+    the clip has any left.
+    """
+    remaining = list(candidates)
+    chosen = []
+    while remaining and len(chosen) < count:
+        pauses = [k for k in remaining if words[k + 1]["start"] - words[k]["end"] >= pause_s]
+        pool = pauses if pauses and rng.random() < pause_share else remaining
+        k = int(rng.choice(pool))
+        chosen.append(k)
+        remaining.remove(k)
+    return chosen
+
+
 def plan_examples(
     record: dict,
     rng: np.random.Generator,
@@ -69,6 +96,8 @@ def plan_examples(
     min_words_before: int,
     min_gap_s: float,
     tail_ms_range: tuple[int, int],
+    pause_s: float = 0.25,
+    pause_share: float = 0.0,
 ) -> list[Example]:
     """Decide which complete and incomplete examples to make from one clip."""
     words = record["words"]
@@ -86,8 +115,8 @@ def plan_examples(
     # just learn "long clip = finished" instead of listening to how it ends.
     examples = []
     last = len(words) - 1
-    chosen = rng.choice(candidates, size=min(per_class, len(candidates)), replace=False)
-    for k in sorted(int(k) for k in chosen):
+    chosen = choose_cuts(words, candidates, rng, per_class, pause_s, pause_share)
+    for k in sorted(chosen):
         n = int(rng.integers(min_words_before, k + 2))  # between the minimum and k + 1 words
         examples.append(Example(0, k - n + 1, k, random_tail()))
         examples.append(Example(1, last - n + 1, last, random_tail()))

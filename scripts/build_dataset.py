@@ -76,6 +76,8 @@ def main() -> None:
             min_words_before=cfg["min_words_before_cut"],
             min_gap_s=cfg["min_gap_ms"] / 1000,
             tail_ms_range=tuple(cfg["tail_ms_range"]),
+            pause_s=cfg["pause_ms"] / 1000,
+            pause_share=cfg["pause_share"],
         )
         if not examples:
             dropped += 1

@@ -2,7 +2,7 @@
   "source_clips": 2777,
   "source_clips_dropped": 28,
   "examples": 10962,
-  "hours": 9.88,
+  "hours": 9.99,
   "by_split_lang_label": {
     "test/hi_in/incomplete": 810,
     "test/hi_in/complete": 810,

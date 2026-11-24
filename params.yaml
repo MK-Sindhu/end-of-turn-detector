@@ -22,6 +22,8 @@ dataset:
   min_words_before_cut: 3    # an incomplete example contains at least this many words
   min_gap_ms: 60             # only cut where the speaker left at least this gap
   tail_ms_range: [150, 400]  # silence after the speech, picked at random per example
+  pause_ms: 250              # a gap this long counts as the speaker really pausing
+  pause_share: 0.6           # share of incomplete examples taken from real pauses, when available
 
 validation:
   max_class_imbalance: 0.02  # each split/language must be within 2% of a 50/50 split

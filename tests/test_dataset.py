@@ -1,6 +1,13 @@
 import numpy as np
 
-from indic_eot.dataset import Example, cut_candidates, example_text, plan_examples, render
+from indic_eot.dataset import (
+    Example,
+    choose_cuts,
+    cut_candidates,
+    example_text,
+    plan_examples,
+    render,
+)
 
 SR = 16000
 
@@ -79,3 +86,16 @@ def test_render_keeps_only_last_max_seconds():
 def test_example_text_is_the_spoken_prefix():
     record = make_record()
     assert example_text(record, Example(0, 2, 4, 200)) == "w2 w3 w4"
+
+
+def test_choose_cuts_prefers_real_pauses_when_asked():
+    record = make_record(n_words=20)
+    words = record["words"]
+    # Make one long pause, after word 7.
+    for w in words[8:]:
+        w["start"] += 0.5
+        w["end"] += 0.5
+    candidates = cut_candidates(words, 3, 0.05)
+    always = choose_cuts(words, candidates, np.random.default_rng(0), 2, 0.25, pause_share=1.0)
+    assert always[0] == 7                  # the pause is taken first
+    assert len(set(always)) == 2           # the second pick falls back to another gap
