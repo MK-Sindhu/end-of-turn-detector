@@ -1,0 +1,287 @@
+{
+  "note": "Smart Turn was trained on the training half of this collection (home advantage). Our audio model was trained only on FLEURS Hindi and has never seen this data.",
+  "by_language": {
+    "ben": {
+      "all": {
+        "ours_audio": {
+          "clips": 1000,
+          "accuracy": 0.682,
+          "f1": 0.724,
+          "auroc": 0.7216,
+          "complete_called_complete": 0.851,
+          "incomplete_called_incomplete": 0.5196,
+          "ci95": {
+            "accuracy": [
+              0.655,
+              0.712
+            ],
+            "f1": [
+              0.6942,
+              0.7511
+            ],
+            "auroc": [
+              0.6912,
+              0.7539
+            ]
+          }
+        },
+        "smart_turn": {
+          "clips": 1000,
+          "accuracy": 0.851,
+          "f1": 0.8481,
+          "auroc": 0.9416,
+          "complete_called_complete": 0.849,
+          "incomplete_called_incomplete": 0.8529,
+          "ci95": {
+            "accuracy": [
+              0.83,
+              0.874
+            ],
+            "f1": [
+              0.8247,
+              0.8737
+            ],
+            "auroc": [
+              0.9288,
+              0.9546
+            ]
+          }
+        }
+      },
+      "synthetic_speech": {
+        "ours_audio": {
+          "clips": 1000,
+          "accuracy": 0.682,
+          "f1": 0.724,
+          "auroc": 0.7216,
+          "complete_called_complete": 0.851,
+          "incomplete_called_incomplete": 0.5196,
+          "ci95": {
+            "accuracy": [
+              0.655,
+              0.712
+            ],
+            "f1": [
+              0.6942,
+              0.7511
+            ],
+            "auroc": [
+              0.6912,
+              0.7539
+            ]
+          }
+        },
+        "smart_turn": {
+          "clips": 1000,
+          "accuracy": 0.851,
+          "f1": 0.8481,
+          "auroc": 0.9416,
+          "complete_called_complete": 0.849,
+          "incomplete_called_incomplete": 0.8529,
+          "ci95": {
+            "accuracy": [
+              0.83,
+              0.874
+            ],
+            "f1": [
+              0.8247,
+              0.8737
+            ],
+            "auroc": [
+              0.9288,
+              0.9546
+            ]
+          }
+        }
+      }
+    },
+    "hin": {
+      "all": {
+        "ours_audio": {
+          "clips": 1284,
+          "accuracy": 0.7383,
+          "f1": 0.7939,
+          "auroc": 0.8734,
+          "complete_called_complete": 0.9671,
+          "incomplete_called_incomplete": 0.4894,
+          "ci95": {
+            "accuracy": [
+              0.7142,
+              0.7625
+            ],
+            "f1": [
+              0.7717,
+              0.8159
+            ],
+            "auroc": [
+              0.8541,
+              0.8922
+            ]
+          }
+        },
+        "smart_turn": {
+          "clips": 1284,
+          "accuracy": 0.9276,
+          "f1": 0.9305,
+          "auroc": 0.9835,
+          "complete_called_complete": 0.9312,
+          "incomplete_called_incomplete": 0.9236,
+          "ci95": {
+            "accuracy": [
+              0.9128,
+              0.9424
+            ],
+            "f1": [
+              0.9156,
+              0.9451
+            ],
+            "auroc": [
+              0.9773,
+              0.9888
+            ]
+          }
+        }
+      },
+      "synthetic_speech": {
+        "ours_audio": {
+          "clips": 1284,
+          "accuracy": 0.7383,
+          "f1": 0.7939,
+          "auroc": 0.8734,
+          "complete_called_complete": 0.9671,
+          "incomplete_called_incomplete": 0.4894,
+          "ci95": {
+            "accuracy": [
+              0.7142,
+              0.7625
+            ],
+            "f1": [
+              0.7717,
+              0.8159
+            ],
+            "auroc": [
+              0.8541,
+              0.8922
+            ]
+          }
+        },
+        "smart_turn": {
+          "clips": 1284,
+          "accuracy": 0.9276,
+          "f1": 0.9305,
+          "auroc": 0.9835,
+          "complete_called_complete": 0.9312,
+          "incomplete_called_incomplete": 0.9236,
+          "ci95": {
+            "accuracy": [
+              0.9128,
+              0.9424
+            ],
+            "f1": [
+              0.9156,
+              0.9451
+            ],
+            "auroc": [
+              0.9773,
+              0.9888
+            ]
+          }
+        }
+      }
+    },
+    "mar": {
+      "all": {
+        "ours_audio": {
+          "clips": 774,
+          "accuracy": 0.686,
+          "f1": 0.7577,
+          "auroc": 0.8108,
+          "complete_called_complete": 0.9669,
+          "incomplete_called_incomplete": 0.3963,
+          "ci95": {
+            "accuracy": [
+              0.6525,
+              0.7184
+            ],
+            "f1": [
+              0.7275,
+              0.7868
+            ],
+            "auroc": [
+              0.7782,
+              0.84
+            ]
+          }
+        },
+        "smart_turn": {
+          "clips": 774,
+          "accuracy": 0.8811,
+          "f1": 0.885,
+          "auroc": 0.9563,
+          "complete_called_complete": 0.9008,
+          "incomplete_called_incomplete": 0.8609,
+          "ci95": {
+            "accuracy": [
+              0.8605,
+              0.9057
+            ],
+            "f1": [
+              0.8634,
+              0.9087
+            ],
+            "auroc": [
+              0.9447,
+              0.9686
+            ]
+          }
+        }
+      },
+      "synthetic_speech": {
+        "ours_audio": {
+          "clips": 774,
+          "accuracy": 0.686,
+          "f1": 0.7577,
+          "auroc": 0.8108,
+          "complete_called_complete": 0.9669,
+          "incomplete_called_incomplete": 0.3963,
+          "ci95": {
+            "accuracy": [
+              0.6525,
+              0.7184
+            ],
+            "f1": [
+              0.7275,
+              0.7868
+            ],
+            "auroc": [
+              0.7782,
+              0.84
+            ]
+          }
+        },
+        "smart_turn": {
+          "clips": 774,
+          "accuracy": 0.8811,
+          "f1": 0.885,
+          "auroc": 0.9563,
+          "complete_called_complete": 0.9008,
+          "incomplete_called_incomplete": 0.8609,
+          "ci95": {
+            "accuracy": [
+              0.8605,
+              0.9057
+            ],
+            "f1": [
+              0.8634,
+              0.9087
+            ],
+            "auroc": [
+              0.9447,
+              0.9686
+            ]
+          }
+        }
+      }
+    }
+  }
+}

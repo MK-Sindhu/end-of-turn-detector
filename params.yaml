@@ -71,3 +71,7 @@ baselines:
   smart_turn:                       # existing open audio turn detector (BSD-2)
     repo: pipecat-ai/smart-turn-v3
     file: smart-turn-v3.2-gpu.onnx  # the full-precision version (32 MB)
+  smart_turn_test:                  # Smart Turn's own published test set (CC-BY-4.0)
+    repo: pipecat-ai/smart-turn-data-v3.2-test
+    languages: [hin, ben, mar]      # Hindi, plus Bengali and Marathi (never trained on)
+    max_shards: null                # set to 1 for a quick trial; null = all 10 files

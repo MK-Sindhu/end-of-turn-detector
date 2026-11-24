@@ -403,8 +403,12 @@ stages:
       nfiles: 2778
     - path: scripts/baseline_smart_turn.py
       hash: md5
-      md5: 9156d370c46372d2a2ea3e34374583c6
-      size: 3170
+      md5: 7a3e860be3b64672e6a49ac5347d2f39
+      size: 1876
+    - path: src/indic_eot/baselines.py
+      hash: md5
+      md5: db98482317e522e80e516f0fe23a5f8b
+      size: 1544
     - path: src/indic_eot/streaming.py
       hash: md5
       md5: 2daf700a348a8de02b7fa9da92dc11c1
@@ -430,3 +434,68 @@ stages:
       hash: md5
       md5: 117dc543fbe97eec56b855100b354a55
       size: 189447
+  download_smart_turn_test:
+    cmd: python scripts/download_smart_turn_test.py
+    deps:
+    - path: scripts/download_smart_turn_test.py
+      hash: md5
+      md5: c613ea35099577545a20d7d8fba17893
+      size: 3662
+    params:
+      params.yaml:
+        audio.sample_rate: 16000
+        baselines.smart_turn_test:
+          repo: pipecat-ai/smart-turn-data-v3.2-test
+          languages:
+          - hin
+          - ben
+          - mar
+          max_shards:
+    outs:
+    - path: data/external/smart_turn_test
+      hash: md5
+      md5: 50bf05671d4f4dee86ccf604b9c719fc.dir
+      size: 611270430
+      nfiles: 3059
+  eval_smart_turn_test:
+    cmd: python scripts/eval_smart_turn_test.py
+    deps:
+    - path: data/external/smart_turn_test
+      hash: md5
+      md5: 50bf05671d4f4dee86ccf604b9c719fc.dir
+      size: 611270430
+      nfiles: 3059
+    - path: models/audio/model.pt
+      hash: md5
+      md5: 93c2cacc5f1e3a57c800fbfa471f0300
+      size: 31759530
+    - path: scripts/eval_smart_turn_test.py
+      hash: md5
+      md5: f783fc5816b33daed6a27a163ed85450
+      size: 5914
+    - path: src/indic_eot/audio_model.py
+      hash: md5
+      md5: 3f431424148d881145e213f298b6ffae
+      size: 4139
+    - path: src/indic_eot/baselines.py
+      hash: md5
+      md5: db98482317e522e80e516f0fe23a5f8b
+      size: 1544
+    params:
+      params.yaml:
+        audio:
+          sample_rate: 16000
+          max_seconds: 8.0
+        baselines.smart_turn:
+          repo: pipecat-ai/smart-turn-v3
+          file: smart-turn-v3.2-gpu.onnx
+        train_audio.encoder: openai/whisper-tiny
+    outs:
+    - path: results/smart_turn_test_metrics.json
+      hash: md5
+      md5: e0b64e5da7b6f7150ce69695f7abd1e4
+      size: 6533
+    - path: results/smart_turn_test_predictions.csv
+      hash: md5
+      md5: 79b779e7866346a66382e2ab8ad16d6c
+      size: 183521

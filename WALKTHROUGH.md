@@ -176,6 +176,31 @@ The model now beats a 500 ms timeout on both measures and matches a 700 ms timeo
 
 **Not included**: LiveKit's turn detector. Its licence allows use only inside the LiveKit Agents framework, not standalone, so it was not run.
 
+## Step 13: The reverse comparison, on Smart Turn's test set
+
+**What**: [scripts/download_smart_turn_test.py](scripts/download_smart_turn_test.py) downloads Smart Turn's published test set (31,527 clips, 23 languages, CC-BY licence) and keeps the Hindi, Bengali and Marathi clips. [scripts/eval_smart_turn_test.py](scripts/eval_smart_turn_test.py) scores our audio model and Smart Turn on the same clips.
+
+**Why**: step 12 was played on our home ground. This is the away game: speakers and recordings our model has never seen, and two languages (Bengali, Marathi) it was never trained on. Smart Turn has the home advantage this time, because it was trained on the training half of this collection.
+
+**Limits of this test**: the set has labels but no transcripts, so only the audio model can be scored. Every Hindi, Bengali and Marathi clip in it is marked as synthetic speech (made by a text-to-speech system), so this says nothing about human recordings.
+
+**Learned** (threshold 0.5; 95% intervals for accuracy in brackets):
+
+| Language | Clips | Model | Accuracy | AUROC | Complete called complete | Incomplete called incomplete |
+|---|---|---|---|---|---|---|
+| Hindi | 1,284 | Ours: audio | 73.8% (71.4 to 76.3) | 0.873 | 96.7% | 48.9% |
+| Hindi | 1,284 | Smart Turn | 92.8% (91.3 to 94.2) | 0.984 | 93.1% | 92.4% |
+| Marathi | 774 | Ours: audio | 68.6% (65.3 to 71.8) | 0.811 | 96.7% | 39.6% |
+| Marathi | 774 | Smart Turn | 88.1% (86.1 to 90.6) | 0.956 | 90.1% | 86.1% |
+| Bengali | 1,000 | Ours: audio | 68.2% (65.5 to 71.2) | 0.722 | 85.1% | 52.0% |
+| Bengali | 1,000 | Smart Turn | 85.1% (83.0 to 87.4) | 0.942 | 84.9% | 85.3% |
+
+- Smart Turn wins clearly in all three languages, by 17 to 19 points of accuracy.
+- Our model's failure is one-sided. It recognises complete turns well but calls about half of the incomplete clips complete. An agent using it on this kind of speech would interrupt people constantly.
+- Its AUROC in Hindi (0.87) is much better than its accuracy suggests. The model ranks clips reasonably but its threshold of 0.5 is wrong for this data, so part of the gap is calibration and part is real.
+- Taken with step 12: each model is good on data like its own training data and weak elsewhere. Our model has learned "FLEURS-style read Hindi", not end-of-turn detection in general.
+- Where it fails: about two thirds of the incomplete clips end in a filler sound ("um"), and our model catches 53 to 62% of those. The rest stop mid-sentence with no filler, and there it catches only 20 to 36% (Smart Turn: 64 to 78%). So the clips that stop cleanly mid-sentence are the hard ones for both models, and far harder for ours.
+
 ## Where the project stands
 
 **What works**
@@ -185,6 +210,7 @@ The model now beats a 500 ms timeout on both measures and matches a 700 ms timeo
 - On this corpus, pause errors comparable to an established open detector, with faster responses (an in-domain comparison; see step 12).
 
 **What limits it**
+- It does not generalise: on Smart Turn's test set the audio model scores 69 to 74% against Smart Turn's 85 to 93% (step 13).
 - Pauses at commas: the model still calls 42% of them complete.
 - Little data: 4,359 training pairs from one corpus of read speech. Both models start overfitting after one or two epochs.
 - Only Hindi so far. No Hinglish, no conversational speech.
@@ -193,9 +219,9 @@ The model now beats a 500 ms timeout on both measures and matches a 700 ms timeo
 - Nothing has been tested on real recordings of people hesitating.
 
 **What comes next**
-1. The reverse comparison: run our models on Smart Turn's published test set, where our models are the outsider.
+1. More varied training data. Smart Turn's training set is published under the same CC-BY licence; adding its Hindi, Bengali and Marathi clips is the most direct fix for the weakness step 13 exposed.
 2. A smarter policy that waits a middling time when the model is unsure.
-3. A larger encoder and more Hindi data; then more languages and Hinglish.
+3. A larger encoder; then more languages and Hinglish.
 4. Export to ONNX, package as `indic_eot`, measure speed.
 5. Record and test on real hesitant speech.
 

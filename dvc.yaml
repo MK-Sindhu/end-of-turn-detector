@@ -142,6 +142,7 @@ stages:
     cmd: python scripts/baseline_smart_turn.py
     deps:
       - scripts/baseline_smart_turn.py
+      - src/indic_eot/baselines.py
       - src/indic_eot/streaming.py
       - data/interim/alignments.jsonl
       - data/raw/fleurs
@@ -154,6 +155,34 @@ stages:
       - streaming.min_silence_ms
     outs:
       - results/baseline_points.csv
+
+  download_smart_turn_test:
+    cmd: python scripts/download_smart_turn_test.py
+    deps:
+      - scripts/download_smart_turn_test.py
+    params:
+      - audio.sample_rate
+      - baselines.smart_turn_test
+    outs:
+      - data/external/smart_turn_test
+
+  eval_smart_turn_test:
+    cmd: python scripts/eval_smart_turn_test.py
+    deps:
+      - scripts/eval_smart_turn_test.py
+      - src/indic_eot/audio_model.py
+      - src/indic_eot/baselines.py
+      - data/external/smart_turn_test
+      - models/audio/model.pt
+    params:
+      - audio
+      - train_audio.encoder
+      - baselines.smart_turn
+    outs:
+      - results/smart_turn_test_predictions.csv
+    metrics:
+      - results/smart_turn_test_metrics.json:
+          cache: false
 
   simulate:
     cmd: python scripts/simulate.py
