@@ -5,7 +5,9 @@ Writes  data/processed/eot/<split>/<id>.wav   16 kHz mono clips
         data/processed/eot/metadata.csv       one row per clip (label, text, ...)
         results/dataset_stats.json            counts, for a quick sanity check
 
-See src/indic_eot/dataset.py for how examples are made.
+Every example is one moment where a live agent would have to decide: a natural
+pause inside a sentence (incomplete) or the true end (complete), unedited.
+See src/indic_eot/dataset.py for the details.
 """
 
 import csv
@@ -21,7 +23,14 @@ import torchaudio.functional as F
 from tqdm import tqdm
 
 from indic_eot.config import REPO_ROOT, load_params
-from indic_eot.dataset import example_text, is_usable, plan_examples, render
+from indic_eot.dataset import (
+    ends_at_clause_boundary,
+    example_text,
+    gap_after,
+    is_usable,
+    plan_examples,
+    render,
+)
 
 ALIGNMENTS = REPO_ROOT / "data" / "interim" / "alignments.jsonl"
 OUT_DIR = REPO_ROOT / "data" / "processed" / "eot"
@@ -72,12 +81,11 @@ def main() -> None:
         examples = plan_examples(
             record,
             rng,
-            per_class=cfg["examples_per_class"],
-            min_words_before=cfg["min_words_before_cut"],
+            max_pauses=cfg["max_pauses_per_clip"],
+            min_words=cfg["min_words_in_example"],
             min_gap_s=cfg["min_gap_ms"] / 1000,
             tail_ms_range=tuple(cfg["tail_ms_range"]),
-            pause_s=cfg["pause_ms"] / 1000,
-            pause_share=cfg["pause_share"],
+            tail_guard_ms=cfg["tail_guard_ms"],
         )
         if not examples:
             dropped += 1
@@ -88,15 +96,10 @@ def main() -> None:
         source_id = record["path"].split("/")[-1].removesuffix(".wav")
         (OUT_DIR / split).mkdir(parents=True, exist_ok=True)
 
-        words = record["words"]
         for i, ex in enumerate(examples):
             clip = render(audio, record, ex, sr, max_seconds)
-            # How long the speaker really paused at this point in the recording
-            # (for complete clips: the silence left before the recording ends).
-            next_start = (
-                words[ex.last_word + 1]["start"] if ex.label == 0 else record["duration"]
-            )
-            gap_ms = round((next_start - words[ex.last_word]["end"]) * 1000)
+            # How long the speaker was really silent after this point.
+            gap_ms = round(gap_after(record, ex.last_word) * 1000)
             clip_id = f"{record['lang']}_{source_id}_{ex.label}_{i}"
             path = OUT_DIR / split / f"{clip_id}.wav"
             sf.write(path, clip, sr, subtype="PCM_16")
@@ -111,6 +114,7 @@ def main() -> None:
                     "seconds": round(len(clip) / sr, 3),
                     "tail_ms": ex.tail_ms,
                     "gap_ms": gap_ms,
+                    "after_punct": int(ends_at_clause_boundary(record, ex)),
                     "sentence_id": record["sentence_id"],
                     "source_path": record["path"],
                 }

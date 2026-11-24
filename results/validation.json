@@ -4,9 +4,9 @@
     "all_splits_present": {
       "passed": true,
       "detail": {
-        "train": 8442,
-        "val": 900,
-        "test": 1620
+        "train": 8718,
+        "val": 930,
+        "test": 1858
       }
     },
     "unique_ids": {

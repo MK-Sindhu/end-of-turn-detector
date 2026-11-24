@@ -18,22 +18,19 @@ dataset:
     test: [test]
   min_words: 6               # drop source clips shorter than this
   min_align_score: 0.7       # drop clips whose word timings look unreliable
-  examples_per_class: 2      # complete and incomplete examples made per source clip
-  min_words_before_cut: 3    # an incomplete example contains at least this many words
-  min_gap_ms: 60             # only cut where the speaker left at least this gap
-  tail_ms_range: [150, 400]  # silence after the speech, picked at random per example
-  pause_ms: 250              # a gap this long counts as the speaker really pausing
-  pause_share: 0.6           # share of incomplete examples taken from real pauses, when available
+  min_gap_ms: 200            # a silence this long counts as a natural pause
+  max_pauses_per_clip: 4     # use at most this many pauses from one recording
+  min_words_in_example: 2    # every example contains at least this many words
+  tail_ms_range: [150, 400]  # how much of the real silence after the last word is kept
+  tail_guard_ms: 50          # stay this far away from the next word
 
 validation:
   max_class_imbalance: 0.02  # each split/language must be within 2% of a 50/50 split
-  min_seconds: 0.5           # shortest clip allowed
+  min_seconds: 0.3           # shortest clip allowed (two short words plus silence)
 
 shortcut_check:
-  must_be_chance: [length, tail]  # feature groups that must carry no signal
-  max_auroc: 0.55                 # limit for those groups (0.5 = guessing)
-  real_pause_ms: 250              # incomplete clips cut at a gap at least this long
-  connected_speech_ms: 80         # incomplete clips cut at a gap at most this long
+  must_be_chance: [length]   # feature groups that must carry no signal
+  max_auroc: 0.55            # limit for those groups (0.5 = guessing)
 
 train_audio:
   encoder: openai/whisper-tiny  # pretrained speech encoder (8M parameters)

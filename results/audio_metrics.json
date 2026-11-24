@@ -1,62 +1,62 @@
 {
-  "best_epoch": 3,
+  "best_epoch": 2,
   "encoder": "openai/whisper-tiny",
   "val": {
-    "clips": 900,
-    "loss": 0.1787,
-    "accuracy": 0.9456,
-    "f1": 0.9468,
-    "auroc": 0.9835,
+    "loss": 0.3118,
+    "clips": 930,
+    "accuracy": 0.9,
+    "f1": 0.906,
+    "auroc": 0.9592,
     "ci95": {
       "accuracy": [
-        0.9297,
-        0.9611
+        0.8787,
+        0.9179
       ],
       "f1": [
-        0.9312,
-        0.9618
+        0.8863,
+        0.9229
       ],
       "auroc": [
-        0.9759,
-        0.9909
+        0.9444,
+        0.9723
       ]
     },
-    "incomplete_recall_real_pause": {
-      "clips": 189,
-      "recall": 0.8677
+    "incomplete_recall_clause_boundary": {
+      "clips": 91,
+      "recall": 0.5604
     },
-    "incomplete_recall_connected_speech": {
-      "clips": 147,
-      "recall": 0.9524
+    "incomplete_recall_mid_clause": {
+      "clips": 374,
+      "recall": 0.9037
     }
   },
   "test": {
-    "clips": 1620,
-    "loss": 0.2327,
-    "accuracy": 0.9395,
-    "f1": 0.9407,
-    "auroc": 0.978,
+    "loss": 0.3764,
+    "clips": 1858,
+    "accuracy": 0.8724,
+    "f1": 0.8855,
+    "auroc": 0.9503,
     "ci95": {
       "accuracy": [
-        0.9257,
-        0.9519
+        0.857,
+        0.8871
       ],
       "f1": [
-        0.9269,
-        0.9527
+        0.8729,
+        0.8974
       ],
       "auroc": [
-        0.9704,
-        0.9844
+        0.9396,
+        0.9591
       ]
     },
-    "incomplete_recall_real_pause": {
-      "clips": 352,
-      "recall": 0.8693
+    "incomplete_recall_clause_boundary": {
+      "clips": 216,
+      "recall": 0.5556
     },
-    "incomplete_recall_connected_speech": {
-      "clips": 256,
-      "recall": 0.9688
+    "incomplete_recall_mid_clause": {
+      "clips": 713,
+      "recall": 0.8205
     }
   }
 }

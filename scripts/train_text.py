@@ -125,7 +125,7 @@ def main() -> None:
         prediction_rows = []
         for split in ("val", "test"):
             labels, probs = predict(model, tokenizer, rows[split], device)
-            report[split] = split_report(labels, probs, rows[split], params)
+            report[split] = split_report(labels, probs, rows[split])
             prediction_rows += [
                 {"id": r["id"], "split": split, "label": r["label"], "prob": f"{p:.5f}"}
                 for r, p in zip(rows[split], probs)

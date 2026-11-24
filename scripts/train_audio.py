@@ -28,9 +28,9 @@ from transformers import get_cosine_schedule_with_warmup
 
 from indic_eot.audio_model import AudioEOT, FeaturePrep
 from indic_eot.config import REPO_ROOT, load_params
+from indic_eot.evaluation import split_report
 from indic_eot.training import (
     ClipDataset,
-    bootstrap_ci,
     classification_metrics,
     flatten,
     load_rows,
@@ -177,28 +177,7 @@ def main() -> None:
         prediction_rows = []
         for split in ("val", "test"):
             labels, probs, loss = predict(model, loaders[split], device)
-            groups = [r["source_path"] for r in rows[split]]
-            report[split] = {
-                "clips": len(labels),
-                "loss": round(loss, 4),
-                **{k: round(v, 4) for k, v in classification_metrics(labels, probs).items()},
-                "ci95": bootstrap_ci(labels, probs, groups),
-            }
-            # Does the model still catch incomplete clips when our cut removed
-            # nothing audible (the speaker really paused there)? If it only
-            # worked on cuts inside flowing speech, it would be detecting the
-            # edit rather than the speech.
-            gap = np.array([int(r["gap_ms"]) for r in rows[split]])
-            check = params["shortcut_check"]
-            for name, mask in {
-                "real_pause": gap >= check["real_pause_ms"],
-                "connected_speech": gap <= check["connected_speech_ms"],
-            }.items():
-                subset = (labels == 0) & mask
-                report[split][f"incomplete_recall_{name}"] = {
-                    "clips": int(subset.sum()),
-                    "recall": round(float((probs[subset] < 0.5).mean()), 4),
-                }
+            report[split] = {"loss": round(loss, 4), **split_report(labels, probs, rows[split])}
             prediction_rows += [
                 {"id": r["id"], "split": split, "label": r["label"], "prob": f"{p:.5f}"}
                 for r, p in zip(rows[split], probs)

@@ -50,12 +50,12 @@ stages:
       size: 6149520
     - path: scripts/build_dataset.py
       hash: md5
-      md5: cd32a0d45ad3bc7e97178f63c9b25bba
-      size: 5436
+      md5: d3689781354e67a6068ee6bdf0803514
+      size: 5415
     - path: src/indic_eot/dataset.py
       hash: md5
-      md5: 759020052ed35bb3e6bf7b056a74ab07
-      size: 7076
+      md5: e50900a64672f80be4acef5988d931bf
+      size: 5347
     params:
       params.yaml:
         audio:
@@ -71,33 +71,32 @@ stages:
             - test
           min_words: 6
           min_align_score: 0.7
-          examples_per_class: 2
-          min_words_before_cut: 3
-          min_gap_ms: 60
+          min_gap_ms: 200
+          max_pauses_per_clip: 4
+          min_words_in_example: 2
           tail_ms_range:
           - 150
           - 400
-          pause_ms: 250
-          pause_share: 0.6
+          tail_guard_ms: 50
         seed: 42
     outs:
     - path: data/processed/eot
       hash: md5
-      md5: 4efa72dd0039e79b5a3ea046c2030688.dir
-      size: 1154244957
-      nfiles: 10963
+      md5: 63dfe4b8b0b7052f4d343c790632cb9a.dir
+      size: 1183926041
+      nfiles: 11507
     - path: results/dataset_stats.json
       hash: md5
-      md5: b2b2159d01d5b09968307a434bf5122c
-      size: 326
+      md5: ed102efb9a26ecf6bc6cbb95f1380d71
+      size: 328
   validate:
     cmd: python scripts/validate_dataset.py
     deps:
     - path: data/processed/eot
       hash: md5
-      md5: 4efa72dd0039e79b5a3ea046c2030688.dir
-      size: 1154244957
-      nfiles: 10963
+      md5: 63dfe4b8b0b7052f4d343c790632cb9a.dir
+      size: 1183926041
+      nfiles: 11507
     - path: scripts/validate_dataset.py
       hash: md5
       md5: a158a7b73e331a3050f7e592291eb959
@@ -109,58 +108,55 @@ stages:
           max_seconds: 8.0
         validation:
           max_class_imbalance: 0.02
-          min_seconds: 0.5
+          min_seconds: 0.3
     outs:
     - path: results/validation.json
       hash: md5
-      md5: 0aca22befc86a12f29b8825fbbcea990
+      md5: 69b840d9eb4eca6b924677ec42c554a6
       size: 692
   shortcut_check:
     cmd: python scripts/shortcut_check.py
     deps:
     - path: data/processed/eot
       hash: md5
-      md5: 4efa72dd0039e79b5a3ea046c2030688.dir
-      size: 1154244957
-      nfiles: 10963
+      md5: 63dfe4b8b0b7052f4d343c790632cb9a.dir
+      size: 1183926041
+      nfiles: 11507
     - path: results/validation.json
       hash: md5
-      md5: 0aca22befc86a12f29b8825fbbcea990
+      md5: 69b840d9eb4eca6b924677ec42c554a6
       size: 692
     - path: scripts/shortcut_check.py
       hash: md5
-      md5: d98bd03c5a0914ee2038a0485ae238d8
-      size: 5345
+      md5: b7bf948a1dbf67d431d9a878878996c3
+      size: 3847
     params:
       params.yaml:
         shortcut_check:
           must_be_chance:
           - length
-          - tail
           max_auroc: 0.55
-          real_pause_ms: 250
-          connected_speech_ms: 80
     outs:
     - path: results/shortcut_check.json
       hash: md5
-      md5: e94ecb71c98464b46730959359b9ede0
-      size: 385
+      md5: 54b02bad06fee01d6843dad2c62d9842
+      size: 189
   train_audio:
     cmd: python scripts/train_audio.py
     deps:
     - path: data/processed/eot
       hash: md5
-      md5: 4efa72dd0039e79b5a3ea046c2030688.dir
-      size: 1154244957
-      nfiles: 10963
+      md5: 63dfe4b8b0b7052f4d343c790632cb9a.dir
+      size: 1183926041
+      nfiles: 11507
     - path: results/shortcut_check.json
       hash: md5
-      md5: e94ecb71c98464b46730959359b9ede0
-      size: 385
+      md5: 54b02bad06fee01d6843dad2c62d9842
+      size: 189
     - path: scripts/train_audio.py
       hash: md5
-      md5: 617f72e081ae5b9ccd14a80b974f199b
-      size: 9132
+      md5: 11dc6aa77cf55b8cc43442b929d2e133
+      size: 8089
     - path: src/indic_eot/audio_model.py
       hash: md5
       md5: 3f431424148d881145e213f298b6ffae
@@ -175,8 +171,6 @@ stages:
           sample_rate: 16000
           max_seconds: 8.0
         seed: 42
-        shortcut_check.connected_speech_ms: 80
-        shortcut_check.real_pause_ms: 250
         train_audio:
           encoder: openai/whisper-tiny
           epochs: 6
@@ -196,32 +190,32 @@ stages:
     outs:
     - path: models/audio/model.pt
       hash: md5
-      md5: 939c092c8781b719702bbe0da4d00b3b
+      md5: 93c2cacc5f1e3a57c800fbfa471f0300
       size: 31759530
     - path: results/audio_metrics.json
       hash: md5
-      md5: b20d7ea7f6dfc867f3211b7a7365bead
-      size: 1037
+      md5: 4a86cb0959bb17c3031b1e6b12a79c53
+      size: 1030
     - path: results/audio_predictions.csv
       hash: md5
-      md5: d28df3bbff22d3b860bf2ada04a8c87a
-      size: 116143
+      md5: 60675ae90aa14c2a1d3fce69220d2255
+      size: 128585
   train_text:
     cmd: python scripts/train_text.py
     deps:
     - path: data/processed/eot
       hash: md5
-      md5: 4efa72dd0039e79b5a3ea046c2030688.dir
-      size: 1154244957
-      nfiles: 10963
+      md5: 63dfe4b8b0b7052f4d343c790632cb9a.dir
+      size: 1183926041
+      nfiles: 11507
     - path: scripts/train_text.py
       hash: md5
-      md5: 25488116004febfeaf8f023b9d85a73e
-      size: 6324
+      md5: 497862b9049f8a50a3ee7c8f9c70413b
+      size: 6316
     - path: src/indic_eot/evaluation.py
       hash: md5
-      md5: b7fd1f53de6fc4f0ee95f22d465c74eb
-      size: 1259
+      md5: 5621219bd75c50395226305b6a994015
+      size: 1293
     - path: src/indic_eot/text_model.py
       hash: md5
       md5: f0d57a6e36f213f8cc609d8d35525616
@@ -233,8 +227,6 @@ stages:
     params:
       params.yaml:
         seed: 42
-        shortcut_check.connected_speech_ms: 80
-        shortcut_check.real_pause_ms: 250
         train_text:
           encoder: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
           epochs: 5
@@ -245,57 +237,53 @@ stages:
     outs:
     - path: models/text
       hash: md5
-      md5: b69e2917153679163ee8c001578e6614.dir
+      md5: 65c2c98e328018b6a96a39e321262239.dir
       size: 487724541
       nfiles: 4
     - path: results/text_metrics.json
       hash: md5
-      md5: bd6d81d28cc33dcd98bda3e57760e451
-      size: 1036
+      md5: 1d23ce04f3565bacf5c7ddea8d2fa876
+      size: 1034
     - path: results/text_predictions.csv
       hash: md5
-      md5: 3934dea7106ef1a1a34fa114eb6c4b26
-      size: 116143
+      md5: 39ec40bb38433f5633493c816cd73e4b
+      size: 128585
   fuse:
     cmd: python scripts/fuse.py
     deps:
     - path: data/processed/eot/metadata.csv
       hash: md5
-      md5: ea951fe14b7155dd78c4c046cf2b66ae
-      size: 3051769
+      md5: 560be6eaf9c3fd69edeac4cce647a9e8
+      size: 3173919
     - path: results/audio_predictions.csv
       hash: md5
-      md5: d28df3bbff22d3b860bf2ada04a8c87a
-      size: 116143
+      md5: 60675ae90aa14c2a1d3fce69220d2255
+      size: 128585
     - path: results/text_predictions.csv
       hash: md5
-      md5: 3934dea7106ef1a1a34fa114eb6c4b26
-      size: 116143
+      md5: 39ec40bb38433f5633493c816cd73e4b
+      size: 128585
     - path: scripts/fuse.py
       hash: md5
-      md5: 86da814c3f364d7834bef02160648248
-      size: 6720
+      md5: e925699d10befea2a59ddfc4154a9765
+      size: 6718
     - path: src/indic_eot/evaluation.py
       hash: md5
-      md5: b7fd1f53de6fc4f0ee95f22d465c74eb
-      size: 1259
-    params:
-      params.yaml:
-        shortcut_check.connected_speech_ms: 80
-        shortcut_check.real_pause_ms: 250
+      md5: 5621219bd75c50395226305b6a994015
+      size: 1293
     outs:
     - path: models/fusion.json
       hash: md5
-      md5: e4075b3f340d3038a9cd139750caba5e
-      size: 63
+      md5: 1e2c20544856f3c4b6685d8aa8b1ffdf
+      size: 62
     - path: results/fusion_metrics.json
       hash: md5
-      md5: 1b9fded4a899e720ba20205315a28db2
-      size: 2104
+      md5: edc77137fb2cb1d2a27ef0af47ba3310
+      size: 2111
     - path: results/fusion_predictions.csv
       hash: md5
-      md5: 889653d1572f9779985ab422f7d41bf7
-      size: 116143
+      md5: 0a6d11b5b6ae39f8fe133ff96f4662b7
+      size: 128585
   stream_points:
     cmd: python scripts/stream_points.py
     deps:
@@ -310,15 +298,15 @@ stages:
       nfiles: 2778
     - path: models/audio/model.pt
       hash: md5
-      md5: 939c092c8781b719702bbe0da4d00b3b
+      md5: 93c2cacc5f1e3a57c800fbfa471f0300
       size: 31759530
     - path: models/fusion.json
       hash: md5
-      md5: e4075b3f340d3038a9cd139750caba5e
-      size: 63
+      md5: 1e2c20544856f3c4b6685d8aa8b1ffdf
+      size: 62
     - path: models/text
       hash: md5
-      md5: b69e2917153679163ee8c001578e6614.dir
+      md5: 65c2c98e328018b6a96a39e321262239.dir
       size: 487724541
       nfiles: 4
     - path: scripts/stream_points.py
@@ -352,14 +340,14 @@ stages:
     outs:
     - path: results/stream_points.csv
       hash: md5
-      md5: 93424a29372d762c98101d0c2c459711
+      md5: b10c026960e9eeadd32ce730521b89bb
       size: 246823
   simulate:
     cmd: python scripts/simulate.py
     deps:
     - path: results/stream_points.csv
       hash: md5
-      md5: 93424a29372d762c98101d0c2c459711
+      md5: b10c026960e9eeadd32ce730521b89bb
       size: 246823
     - path: scripts/simulate.py
       hash: md5
@@ -387,9 +375,9 @@ stages:
     outs:
     - path: results/streaming_metrics.json
       hash: md5
-      md5: ce3c8321da5f51cdf6511847c5152473
-      size: 74267
+      md5: a553fcb297e06913075b6383412e05bf
+      size: 74253
     - path: results/streaming_tradeoff.png
       hash: md5
-      md5: 5f30ecc64f786451fb6a8fc5d8321aaf
-      size: 150733
+      md5: 1344e8bb14cd47c3f2c6a20ffd39de29
+      size: 158605

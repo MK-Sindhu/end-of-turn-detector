@@ -75,8 +75,6 @@ stages:
       - seed
       - audio
       - train_audio
-      - shortcut_check.real_pause_ms
-      - shortcut_check.connected_speech_ms
     outs:
       - models/audio/model.pt
       - results/audio_predictions.csv
@@ -95,8 +93,6 @@ stages:
     params:
       - seed
       - train_text
-      - shortcut_check.real_pause_ms
-      - shortcut_check.connected_speech_ms
     outs:
       - models/text
       - results/text_predictions.csv
@@ -112,9 +108,6 @@ stages:
       - data/processed/eot/metadata.csv
       - results/audio_predictions.csv
       - results/text_predictions.csv
-    params:
-      - shortcut_check.real_pause_ms
-      - shortcut_check.connected_speech_ms
     outs:
       - results/fusion_predictions.csv
       - models/fusion.json:

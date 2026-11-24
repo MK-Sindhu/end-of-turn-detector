@@ -50,7 +50,7 @@ def paired_difference(labels, probs_a, probs_b, groups, mask=None, n=2000, seed=
     """Accuracy of B minus accuracy of A, with a 95% bootstrap interval.
 
     With a mask, accuracy is measured only on those clips (used for the
-    real-pause subset, where every clip is incomplete, so accuracy = recall).
+    clause-boundary pauses, where every clip is incomplete, so accuracy = recall).
     """
     correct_a = (probs_a >= 0.5) == labels
     correct_b = (probs_b >= 0.5) == labels
@@ -104,19 +104,19 @@ def main() -> None:
 
     test = data["test"]
     groups = [r["source_path"] for r in test["rows"]]
-    gap = np.array([int(r["gap_ms"]) for r in test["rows"]])
-    real_pause = (test["labels"] == 0) & (gap >= params["shortcut_check"]["real_pause_ms"])
+    at_boundary = np.array([r["after_punct"] == "1" for r in test["rows"]])
+    boundary_pauses = (test["labels"] == 0) & at_boundary
 
     report = {
         "weights": weights,
         "test": {
-            name: split_report(test["labels"], test[name], test["rows"], params)
+            name: split_report(test["labels"], test[name], test["rows"])
             for name in ("audio", "text", "fusion")
         },
         "fusion_minus_audio": {
             "accuracy": paired_difference(test["labels"], test["audio"], test["fusion"], groups),
-            "real_pause_recall": paired_difference(
-                test["labels"], test["audio"], test["fusion"], groups, real_pause
+            "clause_boundary_recall": paired_difference(
+                test["labels"], test["audio"], test["fusion"], groups, boundary_pauses
             ),
         },
         # How often the two models disagree, and who is right when they do.
@@ -151,7 +151,7 @@ def main() -> None:
                 "test_accuracy": fused["accuracy"],
                 "test_f1": fused["f1"],
                 "test_auroc": fused["auroc"],
-                "test_real_pause_recall": fused["incomplete_recall_real_pause"]["recall"],
+                "test_clause_boundary_recall": fused["incomplete_recall_clause_boundary"]["recall"],
             }
         )
         mlflow.log_artifact(str(METRICS_FILE))
@@ -159,13 +159,13 @@ def main() -> None:
     # A compact table for the terminal.
     print(f"\nweights: {weights}\n")
     print(
-        f"{'model':8} {'accuracy':>9} {'auroc':>7} {'real-pause recall':>18} {'flowing-speech recall':>22}"
+        f"{'model':8} {'accuracy':>9} {'auroc':>7} {'clause-boundary recall':>23} {'mid-clause recall':>18}"
     )
     for name, m in report["test"].items():
         print(
             f"{name:8} {m['accuracy']:9.4f} {m['auroc']:7.4f} "
-            f"{m['incomplete_recall_real_pause']['recall']:18.4f} "
-            f"{m['incomplete_recall_connected_speech']['recall']:22.4f}"
+            f"{m['incomplete_recall_clause_boundary']['recall']:23.4f} "
+            f"{m['incomplete_recall_mid_clause']['recall']:18.4f}"
         )
     print(f"\nfusion - audio: {json.dumps(report['fusion_minus_audio'])}")
     print(f"disagreement:   {json.dumps(report['disagreement'])}")

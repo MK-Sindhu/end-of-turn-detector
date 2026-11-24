@@ -4,30 +4,17 @@ We train deliberately dumb classifiers (logistic regression) on features that
 contain no words at all, and measure how well each one separates complete from
 incomplete clips. AUROC 0.5 = pure guessing, 1.0 = perfect.
 
-Feature groups, from "must be useless" to "allowed to help a bit":
+  length       clip duration and tail length. MUST be ~0.5: examples are made
+               in pairs with the same word count and tail, so anything higher
+               means a construction bug. The script fails above the limit.
+  tail         loudness of the real silence after the last word.
+  last_30ms    loudness of the final 30 ms of speech.
+  last_500ms   loudness contour over the final 500 ms of speech.
 
-  length      clip duration and tail length. Must be ~0.5: we matched these on
-              purpose, so anything higher means a construction bug.
-  tail        loudness of the silence after the speech. Must be ~0.5: both
-              classes get the same room tone.
-  edit_point  loudness of the last 30 ms of speech, right where we cut. A high
-              score here means the model could detect our edit, not the speech.
-  ending      loudness contour over the last 500 ms of speech. Speakers really
-              do trail off at the end of a sentence, so some signal here is
-              genuine. This is the bar the real model has to beat clearly.
-
-The first two are hard limits (the script fails above the threshold). The last
-two are reported so we know how much of the model's score could be cheap.
-
-Is the edit_point signal our editing, or real speech? To find out we score it
-again on two subsets of the incomplete clips:
-  real_pause        the speaker genuinely paused there (long gap in the source
-                    recording), so our cut removed nothing audible.
-  connected_speech  the next word followed almost immediately, so our cut
-                    landed inside flowing speech.
-If the edit were the cause, connected_speech would score much higher than
-real_pause. If both score about the same, the difference is how people
-actually sound at the end of a sentence.
+The last three are reported, not enforced. Nothing in these clips is edited,
+so any signal there is how people really sound (trailing off at the end of a
+sentence, breathing in during a pause). They are the bar the real model has
+to beat clearly: if it did no better, it would just be a loudness meter.
 
 Writes results/shortcut_check.json.
 """
@@ -69,8 +56,8 @@ def features(row: dict) -> dict[str, list[float]]:
     return {
         "length": [len(audio) / sr, tail_len / sr],
         "tail": [rms_db(tail), rms_db(tail) - overall],
-        "edit_point": [rms_db(last(30, 0)) - overall],
-        "ending": [rms_db(last(a, a - 100)) - overall for a in (500, 400, 300, 200, 100)],
+        "last_30ms": [rms_db(last(30, 0)) - overall],
+        "last_500ms": [rms_db(last(a, a - 100)) - overall for a in (500, 400, 300, 200, 100)],
     }
 
 
@@ -92,28 +79,11 @@ def main() -> None:
         scores = model.predict_proba(x[is_test])[:, 1]
         results[group] = round(float(roc_auc_score(labels[is_test], scores)), 4)
 
-    # Edit-point loudness on its own, split by how the speaker behaved at the cut.
-    edit = np.array([f["edit_point"][0] for f in feats])
-    gap = np.array([int(r["gap_ms"]) for r in rows])
-    complete = is_test & (labels == 1)
-    by_cut_type = {}
-    for name, mask in {
-        "real_pause": gap >= cfg["real_pause_ms"],
-        "connected_speech": gap <= cfg["connected_speech_ms"],
-    }.items():
-        subset = complete | (is_test & (labels == 0) & mask)
-        auroc = roc_auc_score(labels[subset], -edit[subset])  # quieter ending = complete
-        by_cut_type[name] = {
-            "auroc": round(float(auroc), 4),
-            "incomplete_clips": int((subset & (labels == 0)).sum()),
-        }
-
     limit = cfg["max_auroc"]
     failed = [g for g in cfg["must_be_chance"] if abs(results[g] - 0.5) > limit - 0.5]
     report = {
         "test_clips": int(is_test.sum()),
         "auroc": results,
-        "edit_point_by_cut_type": by_cut_type,
         "limit_for_must_be_chance": limit,
         "passed": not failed,
     }

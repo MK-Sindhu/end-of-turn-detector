@@ -2,9 +2,10 @@ import numpy as np
 
 from indic_eot.dataset import (
     Example,
-    choose_cuts,
-    cut_candidates,
+    ends_at_clause_boundary,
     example_text,
+    gap_after,
+    natural_pauses,
     plan_examples,
     render,
 )
@@ -12,12 +13,15 @@ from indic_eot.dataset import (
 SR = 16000
 
 
-def make_record(n_words=10, word_s=0.3, gap_s=0.1, lead_s=0.5, trail_s=0.8):
+def make_record(n_words=12, word_s=0.3, gap_s=0.05, lead_s=0.5, trail_s=0.8, pauses=None):
+    """A fake aligned recording. `pauses` maps word index -> gap after that word."""
+    pauses = pauses or {}
     words, t = [], lead_s
     for i in range(n_words):
         words.append({"word": f"w{i}", "start": t, "end": t + word_s, "score": 0.9})
-        t += word_s + gap_s
-    return {"words": words, "duration": t - gap_s + trail_s}
+        t += word_s + pauses.get(i, gap_s)
+    duration = words[-1]["end"] + trail_s
+    return {"words": words, "duration": duration}
 
 
 def make_audio(record):
@@ -25,56 +29,63 @@ def make_audio(record):
     return rng.normal(0, 0.1, int(record["duration"] * SR)).astype(np.float32)
 
 
-def test_cut_never_after_last_word_or_too_early():
-    record = make_record()
-    ks = cut_candidates(record["words"], min_words_before=3, min_gap_s=0.05)
-    assert min(ks) >= 2          # at least 3 words spoken before the cut
-    assert max(ks) <= 8          # at least one word left unsaid
+def plan(record, seed=0, max_pauses=4):
+    return plan_examples(record, np.random.default_rng(seed), max_pauses, 2, 0.2, (150, 400), 50)
 
 
-def test_cut_skips_clause_boundaries():
-    record = make_record()
-    record["words"][4]["word"] = "w4,"
-    assert 4 not in cut_candidates(record["words"], 3, 0.05)
+def test_natural_pauses_finds_only_real_gaps():
+    record = make_record(pauses={3: 0.4, 7: 0.25})
+    assert natural_pauses(record, min_words=2, min_gap_s=0.2) == [3, 7]
 
 
-def test_plan_is_balanced_and_labelled_correctly():
-    record = make_record()
-    examples = plan_examples(record, np.random.default_rng(1), 2, 3, 0.05, (150, 400))
-    assert sum(e.label == 1 for e in examples) == 2
-    assert sum(e.label == 0 for e in examples) == 2
-    for e in examples:
-        assert 150 <= e.tail_ms <= 400
-        assert e.first_word >= 0
-        assert e.last_word - e.first_word + 1 >= 3
-        if e.label == 1:
-            assert e.last_word == len(record["words"]) - 1
-        else:
-            assert e.last_word < len(record["words"]) - 1
+def test_natural_pauses_needs_enough_words_and_a_word_to_come():
+    record = make_record(pauses={0: 0.5, 11: 0.5})  # too early, and after the last word
+    assert natural_pauses(record, min_words=2, min_gap_s=0.2) == []
 
 
-def test_complete_and_incomplete_examples_have_matching_word_counts():
-    record = make_record(n_words=20)
-    examples = plan_examples(record, np.random.default_rng(3), 2, 3, 0.05, (150, 400))
-    count = lambda e: e.last_word - e.first_word + 1
-    assert sorted(count(e) for e in examples if e.label == 1) == sorted(
-        count(e) for e in examples if e.label == 0
-    )
+def test_gap_after_last_word_is_the_trailing_silence():
+    record = make_record(trail_s=0.8)
+    assert abs(gap_after(record, 11) - 0.8) < 1e-9
 
 
-def test_render_length_and_identical_tail_for_both_classes():
-    record = make_record()
+def test_examples_come_in_matched_pairs():
+    record = make_record(pauses={3: 0.4, 7: 0.6})
+    examples = plan(record)
+    incomplete = [e for e in examples if e.label == 0]
+    complete = [e for e in examples if e.label == 1]
+    assert len(incomplete) == len(complete) == 2
+    for neg, pos in zip(incomplete, complete):
+        assert neg.last_word in (3, 7)                       # ends at a natural pause
+        assert pos.last_word == 11                           # ends at the true end
+        assert neg.last_word - neg.first_word == pos.last_word - pos.first_word
+        assert neg.tail_ms == pos.tail_ms
+        assert neg.first_word >= 0 and pos.first_word >= 0
+
+
+def test_tail_never_reaches_the_next_word():
+    record = make_record(pauses={5: 0.22})  # a 220 ms pause, with a 50 ms guard
+    for seed in range(20):
+        for e in plan(record, seed):
+            assert 150 <= e.tail_ms <= 170
+
+
+def test_recording_without_pauses_gives_no_examples():
+    assert plan(make_record()) == []
+
+
+def test_max_pauses_is_respected():
+    record = make_record(pauses={2: 0.4, 4: 0.4, 6: 0.4, 8: 0.4, 9: 0.4})
+    assert len(plan(record, max_pauses=3)) == 6
+
+
+def test_render_keeps_the_real_audio_after_the_last_word():
+    record = make_record(pauses={5: 0.4})
     audio = make_audio(record)
-    complete = render(audio, record, Example(1, 0, 9, 200), SR, max_seconds=8.0)
-    incomplete = render(audio, record, Example(0, 0, 5, 200), SR, max_seconds=8.0)
-
-    # Speech from 0.45 s (50 ms lead-in) to word end + 30 ms, then a 200 ms tail.
-    expected = (record["words"][5]["end"] + 0.03 - 0.45) + 0.2
-    assert abs(len(incomplete) / SR - expected) < 0.01
-
-    # Both clips end with the very same room tone, sample for sample.
-    tail = int(0.2 * SR)
-    np.testing.assert_array_equal(complete[-tail:], incomplete[-tail:])
+    clip = render(audio, record, Example(0, 0, 5, 300), SR, max_seconds=8.0)
+    end = int((record["words"][5]["end"] + 0.3) * SR)
+    start = int((record["words"][0]["start"] - 0.05) * SR)
+    assert len(clip) == end - start
+    np.testing.assert_array_equal(clip, audio[start:end])    # byte-for-byte unedited
 
 
 def test_render_keeps_only_last_max_seconds():
@@ -83,19 +94,10 @@ def test_render_keeps_only_last_max_seconds():
     assert len(clip) == 8 * SR
 
 
-def test_example_text_is_the_spoken_prefix():
+def test_example_text_and_clause_boundary():
     record = make_record()
-    assert example_text(record, Example(0, 2, 4, 200)) == "w2 w3 w4"
-
-
-def test_choose_cuts_prefers_real_pauses_when_asked():
-    record = make_record(n_words=20)
-    words = record["words"]
-    # Make one long pause, after word 7.
-    for w in words[8:]:
-        w["start"] += 0.5
-        w["end"] += 0.5
-    candidates = cut_candidates(words, 3, 0.05)
-    always = choose_cuts(words, candidates, np.random.default_rng(0), 2, 0.25, pause_share=1.0)
-    assert always[0] == 7                  # the pause is taken first
-    assert len(set(always)) == 2           # the second pick falls back to another gap
+    record["words"][4]["word"] = "w4,"
+    example = Example(0, 2, 4, 200)
+    assert example_text(record, example) == "w2 w3 w4,"
+    assert ends_at_clause_boundary(record, example)
+    assert not ends_at_clause_boundary(record, Example(0, 2, 5, 200))

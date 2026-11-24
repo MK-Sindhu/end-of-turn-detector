@@ -1,20 +1,10 @@
 {
-  "test_clips": 1620,
+  "test_clips": 1858,
   "auroc": {
-    "length": 0.5415,
-    "tail": 0.535,
-    "edit_point": 0.7563,
-    "ending": 0.7464
-  },
-  "edit_point_by_cut_type": {
-    "real_pause": {
-      "auroc": 0.7203,
-      "incomplete_clips": 352
-    },
-    "connected_speech": {
-      "auroc": 0.7752,
-      "incomplete_clips": 256
-    }
+    "length": 0.5425,
+    "tail": 0.7158,
+    "last_30ms": 0.7299,
+    "last_500ms": 0.7178
   },
   "limit_for_must_be_chance": 0.55,
   "passed": true
