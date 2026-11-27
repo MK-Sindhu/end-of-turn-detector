@@ -9,18 +9,16 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-The live demo calls the detector's API. Start that service from the repository root (one folder up):
+The live demo runs the model inside the visitor's browser, so the site needs no model server:
 
-```bash
-cd ..
-uv run uvicorn indic_eot.service.app:app --port 7861
-```
+- `public/eot-worker.js` computes the audio features and runs the model with onnxruntime-web.
+- `public/model/` holds the 10 MB model. It is written by `uv run dvc repro site_model` in the repository root; rerun that after retraining and commit the result.
+- `public/ort/` holds the onnxruntime-web files. `npm run dev` and `npm run build` copy them from `node_modules`, so they are not committed.
 
 ## Settings
 
-- `NEXT_PUBLIC_EOT_API`: address of the detector API. Defaults to `http://localhost:7861`. Set it to the deployed service when hosting the site.
-- `src/lib/site.ts`: company name, tagline, and the measured results shown on the product page. Update the numbers there when the model is retrained.
+- `NEXT_PUBLIC_EOT_API`: address shown in the API examples on the product page. Optional. The demo does not use it.
 
-## Deploy
+## Deploying
 
-The site is static and has no server code of its own. On Vercel: import the repository, set **Root Directory** to `website`, and add `NEXT_PUBLIC_EOT_API` as an environment variable.
+The site is static and has no server code of its own. On Vercel: import the repository, set **Root Directory** to `website`. No environment variables are required.

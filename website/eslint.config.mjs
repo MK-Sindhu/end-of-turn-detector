@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Plain worker script and copied runtime files, served as they are:
+    "public/**",
   ]),
 ]);
 

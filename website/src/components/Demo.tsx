@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { site } from "@/lib/site";
 import { drawStrip, fit, Mark, MarkKind, palette } from "./strip";
 
 const RATE = 16000; // the model expects 16 kHz
@@ -23,7 +22,7 @@ type Row = {
   timer: string;
   timerKind: Kind;
 };
-type Result = { probability: number; complete: boolean; inference_ms: number };
+type Result = { probability: number; ms: number };
 
 const SAMPLES = [
   { file: "/samples/pause.wav", label: "A speaker pausing mid-sentence" },
@@ -48,11 +47,53 @@ function resample(samples: Float32Array, fromRate: number): Float32Array {
   return out;
 }
 
-async function request(body: BodyInit, headers?: HeadersInit): Promise<Result> {
-  const response = await fetch(`${site.api}/predict`, { method: "POST", body, headers });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail ?? response.statusText);
-  return data;
+// The model runs in a worker inside this browser tab: public/eot-worker.js.
+// Nothing is uploaded. The worker and the 10 MB model load on first use.
+type Reply = { id?: number; ready?: boolean; probability?: number; ms?: number; error?: string };
+let scorer: { worker: Worker; ready: Promise<void>; waiting: Map<number, (reply: Reply) => void>; next: number } | null =
+  null;
+
+function loadModel(): Promise<void> {
+  if (!scorer) {
+    const worker = new Worker("/eot-worker.js");
+    const waiting = new Map<number, (reply: Reply) => void>();
+    const ready = new Promise<void>((resolve, reject) => {
+      worker.onmessage = (event: MessageEvent<Reply>) => {
+        const reply = event.data;
+        if (reply.ready === true) resolve();
+        else if (reply.ready === false) reject(new Error(reply.error));
+        else if (reply.id !== undefined) {
+          waiting.get(reply.id)?.(reply);
+          waiting.delete(reply.id);
+        }
+      };
+      worker.onerror = () => reject(new Error("the model worker did not start"));
+    });
+    ready.catch(() => {
+      scorer = null; // let the next attempt start again
+    });
+    scorer = { worker, ready, waiting, next: 1 };
+  }
+  return scorer.ready;
+}
+
+async function score(samples: Float32Array): Promise<Result> {
+  await loadModel();
+  const current = scorer!;
+  const id = current.next++;
+  const reply = await new Promise<Reply>((resolve) => {
+    current.waiting.set(id, resolve);
+    current.worker.postMessage({ id, audio: samples }, [samples.buffer]);
+  });
+  if (reply.error !== undefined) throw new Error(reply.error);
+  return { probability: reply.probability!, ms: reply.ms! };
+}
+
+// Decode a recording to 16 kHz mono samples.
+async function decode(file: string): Promise<Float32Array> {
+  const data = await (await fetch(file)).arrayBuffer();
+  const buffer = await new OfflineAudioContext(1, 1, RATE).decodeAudioData(data);
+  return buffer.getChannelData(0).slice();
 }
 
 export function Demo() {
@@ -81,6 +122,7 @@ export function Demo() {
     decided: false,
     rowId: 0,
     replied: false,
+    failed: false,
     requestId: 0,
     nextRow: 1,
   });
@@ -107,6 +149,7 @@ export function Demo() {
     t.decided = false;
     t.rowId = 0;
     t.replied = false;
+    t.failed = false;
     t.requestId++;
   }, []);
 
@@ -128,12 +171,10 @@ export function Demo() {
     const flat = new Float32Array(t.frames.length * FRAME);
     t.frames.forEach((frame, i) => flat.set(frame, i * FRAME));
     try {
-      const result = await request(flat.slice(-MAX_SAMPLES).buffer as ArrayBuffer, {
-        "Content-Type": "application/octet-stream",
-      });
+      const result = await score(flat.slice(-MAX_SAMPLES));
       const percent = `${Math.round(result.probability * 100)}%`;
       setProbability(result.probability);
-      setLatency(result.inference_ms);
+      setLatency(result.ms);
       patch(rowId, { said: `${percent} finished` });
       mark.text = percent;
       if (requestId !== t.requestId) return; // the speaker has already carried on
@@ -148,9 +189,11 @@ export function Demo() {
         say("A pause. The model thinks you have more to say.", "wait");
       }
     } catch (error) {
-      patch(rowId, { said: "No answer" });
-      mark.text = "no answer";
-      say(`The model could not be reached (${(error as Error).message}). Check that the service is running.`, "cut");
+      t.failed = true;
+      patch(rowId, { said: "Not scored" });
+      mark.text = "not scored";
+      mark.kind = "cut";
+      say(`The model could not run in this browser: ${(error as Error).message}.`, "cut");
     }
   }, [patch, say]);
 
@@ -222,7 +265,7 @@ export function Demo() {
         if (!t.decided) {
           t.decided = true;
           if (t.rowId) patch(t.rowId, { decision: `Reply (waited ${FALLBACK_MS} ms)`, decisionKind: "wait" });
-          say(`Finished. The model was unsure, so the agent waited the full ${FALLBACK_MS} ms.`, "wait");
+          if (!t.failed) say(`Finished. The model was unsure, so the agent waited the full ${FALLBACK_MS} ms.`, "wait");
         }
         if (t.rowId) {
           closePause(false);
@@ -282,7 +325,13 @@ export function Demo() {
     resetTurn();
     live.current = { levels: [], marks: [], count: 0, current: null };
     setRunning(true);
-    say("Listening. Say a sentence and pause partway through.", "");
+    say("Loading the model (10 MB, first time only)…", "");
+    try {
+      await loadModel();
+      say("Listening. Say a sentence and pause partway through.", "");
+    } catch (error) {
+      say(`The model could not be loaded: ${(error as Error).message}.`, "cut");
+    }
   }, [onFrame, resetTurn, say]);
 
   useEffect(() => stop, [stop]);
@@ -317,14 +366,12 @@ export function Demo() {
     setSample((all) => ({ ...all, [file]: "Scoring…" }));
     void new Audio(file).play().catch(() => {});
     try {
-      const form = new FormData();
-      form.append("file", await (await fetch(file)).blob(), "clip.wav");
-      const result = await request(form);
+      const result = await score(await decode(file));
       setProbability(result.probability);
-      setLatency(result.inference_ms);
+      setLatency(result.ms);
       setSample((all) => ({
         ...all,
-        [file]: `${Math.round(result.probability * 100)}% finished: ${result.complete ? "reply" : "keep waiting"}`,
+        [file]: `${Math.round(result.probability * 100)}% finished: ${result.probability >= thresholdRef.current ? "reply" : "keep waiting"}`,
       }));
     } catch (error) {
       setSample((all) => ({ ...all, [file]: `Could not be scored: ${(error as Error).message}` }));
@@ -361,7 +408,7 @@ export function Demo() {
             <dd>{silence === null ? "–" : `${silence} ms`}</dd>
           </div>
           <div>
-            <dt>Time to score</dt>
+            <dt>Time to score, in this browser</dt>
             <dd>{latency === null ? "–" : `${latency} ms`}</dd>
           </div>
         </dl>

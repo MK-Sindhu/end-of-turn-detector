@@ -1,0 +1,10 @@
+{
+  "file": "audio_eot.int8.onnx",
+  "mel_filters": "mel_filters.bin",
+  "mel_filters_shape": [
+    201,
+    80
+  ],
+  "max_seconds": 8.0,
+  "sample_rate": 16000
+}

@@ -61,8 +61,8 @@ export default function Viraam() {
           </p>
           <Demo />
           <p className="fine">
-            Audio is sent to the scoring service and is not stored. Sample recordings are from the
-            FLEURS corpus (CC BY 4.0).
+            The model runs inside this browser tab, so your audio never leaves your device. Scoring is slower
+            here than the 22 ms measured on a server CPU. Sample recordings are from the FLEURS corpus (CC BY 4.0).
           </p>
         </section>
 

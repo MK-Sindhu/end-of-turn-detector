@@ -547,3 +547,21 @@ stages:
       md5: f72074935e3fe8c532fb85851ff43584.dir
       size: 42138377
       nfiles: 4
+  site_model:
+    cmd: python scripts/sync_site_model.py
+    deps:
+    - path: scripts/sync_site_model.py
+      hash: md5
+      md5: a83d9c353ea0401a998e2fa881aa13fd
+      size: 1508
+    - path: src/indic_eot/assets
+      hash: md5
+      md5: f72074935e3fe8c532fb85851ff43584.dir
+      size: 42138377
+      nfiles: 4
+    outs:
+    - path: website/public/model
+      hash: md5
+      md5: 88299a56616c5aaefbd50093c5983310.dir
+      size: 10261287
+      nfiles: 3

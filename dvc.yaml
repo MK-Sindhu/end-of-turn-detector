@@ -203,6 +203,15 @@ stages:
       - results/export_metrics.json:
           cache: false
 
+  site_model:
+    cmd: python scripts/sync_site_model.py
+    deps:
+      - scripts/sync_site_model.py
+      - src/indic_eot/assets
+    outs:
+      - website/public/model:
+          cache: false
+
   simulate:
     cmd: python scripts/simulate.py
     deps:

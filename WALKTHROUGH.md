@@ -238,6 +238,25 @@ The export is exact, and a decision costs about 22 ms, well under the 100 ms bud
 - CD (continuous deployment): on every push to `main`, if CI passed, GitHub deploys the service to the Space and waits until it answers.
 - Both are skipped safely until the repository is on GitHub and the settings listed in `deploy.yml` are filled in.
 
+
+## Step 16: Run the demo's model inside the browser
+
+**What**:
+- The Next.js company site moved into this repo as [website/](website/). On Vercel the Root Directory is `website`.
+- [website/public/eot-worker.js](website/public/eot-worker.js): the same feature calculation as [src/indic_eot/features.py](src/indic_eot/features.py), rewritten in JavaScript, plus the model run with onnxruntime-web. It runs in a web worker so the page stays smooth.
+- [scripts/sync_site_model.py](scripts/sync_site_model.py) and the DVC stage `site_model`: copy the 8-bit model and the mel bands into `website/public/model/`. This folder is committed to git, because Vercel builds from git and cannot see DVC files.
+
+**Why**: the first deployed site showed "no answer" at every pause, because the page was asking a model service that was not hosted anywhere. Running the model on the visitor's device removes that dependency: the site is static files only, hosting stays free, and the audio never leaves the device.
+
+**Checks made**:
+- Features: the JavaScript output matches the Python output to within 0.0000002 on three clips.
+- Probabilities: 9.4% and 99.3% in JavaScript against 9.1% and 99.3% in Python for the two sample clips.
+- Real browser: in Chrome with a recorded clip played as a fake microphone, both sample buttons and the microphone flow worked. Scoring took about 230 ms per pause, against about 22 ms on a server CPU, because the browser runs the model single-threaded.
+
+**What it showed**: through the microphone path the mid-sentence sample scored 64% finished, although the same clip scored 8% when read straight from the file. Audio that has been through a microphone chain is another kind of data the model has not seen, which is one more reason for the wider training data in "What comes next".
+
+**After retraining**: `uv run dvc repro` reruns `site_model` by itself. Commit `website/public/model/` and the site picks up the new model on the next deploy.
+
 ## Where the project stands
 
 **What works**
