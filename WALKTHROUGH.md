@@ -253,7 +253,7 @@ The export is exact, and a decision costs about 22 ms, well under the 100 ms bud
 - Probabilities: 9.4% and 99.3% in JavaScript against 9.1% and 99.3% in Python for the two sample clips.
 - Real browser: in Chrome with a recorded clip played as a fake microphone, both sample buttons and the microphone flow worked. Scoring took about 230 ms per pause, against about 22 ms on a server CPU, because the browser runs the model single-threaded.
 
-**What it showed**: through the microphone path the mid-sentence sample scored 64% finished, although the same clip scored 8% when read straight from the file. Audio that has been through a microphone chain is another kind of data the model has not seen, which is one more reason for the wider training data in "What comes next".
+**What it showed**: through the microphone path the mid-sentence sample scored 64% finished, although the same clip scored 8% when read straight from the file. The cause has not been tracked down. The likely candidates are the browser's echo cancellation and noise suppression, and the page cutting the audio at a slightly different point than the test clip was cut.
 
 **After retraining**: `uv run dvc repro` reruns `site_model` by itself. Commit `website/public/model/` and the site picks up the new model on the next deploy.
 
