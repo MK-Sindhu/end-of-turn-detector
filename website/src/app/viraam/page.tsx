@@ -13,10 +13,10 @@ const curl = `curl -X POST ${site.api}/predict \\
   -F "file=@speech_so_far.wav"
 
 {
-  "probability": 0.0731,
+  "probability": 0.094,
   "complete": false,
-  "seconds_received": 3.42,
-  "inference_ms": 22.4
+  "seconds_received": 5.63,
+  "inference_ms": 226.2
 }`;
 
 const python = `from indic_eot import EndOfTurnDetector
@@ -122,6 +122,12 @@ export default function Viraam() {
             <figure><figcaption>HTTP</figcaption><pre>{curl}</pre></figure>
             <figure><figcaption>Python, no network</figcaption><pre>{python}</pre></figure>
           </div>
+          <p className="fine">
+            The HTTP API is open: no key, no sign-up. Send a WAV file, or raw 32-bit float samples at 16 kHz as{" "}
+            <code>application/octet-stream</code>. Requests are limited to 4 MB and only the last 8 seconds are
+            scored. The hosted API takes around 200 ms per request and longer on the first call after a quiet
+            spell. The Python package runs the same model in about 22 ms on a server CPU.
+          </p>
         </section>
 
         <section className="section">

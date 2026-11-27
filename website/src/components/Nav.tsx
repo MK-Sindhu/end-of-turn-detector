@@ -10,7 +10,7 @@ export function Nav() {
       </Link>
       <nav aria-label="Main">
         <Link href="/viraam">End-of-turn detector</Link>
-        <Link href="/#arena">Stress-test arena</Link>
+        <a href={site.arena}>Stress-test arena</a>
         <Link href="/viraam#api">API</Link>
       </nav>
       <Link href="/viraam#demo" className="btn btn-solid">

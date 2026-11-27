@@ -49,13 +49,13 @@ export default function Home() {
               <span className="more">Open the detector →</span>
             </Link>
 
-            <div className="product card" id="arena">
-              <span className="tag">In development</span>
+            <a href={site.arena} className="product card" id="arena">
+              <span className="tag tag-live">Live leaderboard</span>
               <h3>Stress-test arena</h3>
               <p>
-                A scripted caller that holds real-time spoken conversations with a voice agent and sets
-                the traps real callers do: pausing mid-thought, interrupting, changing their mind,
-                reading out numbers over street noise. In Hindi, Hinglish and Indian English.
+                A scripted caller that phones a voice agent and sets the traps real callers do: pausing
+                mid-thought, interrupting, changing their mind, reading out numbers over street noise. In
+                Hindi, Hinglish and Indian English. Every call is recorded, so you can hear each failure.
               </p>
               <ul className="traps">
                 <li>Mid-thought pauses</li>
@@ -65,8 +65,8 @@ export default function Home() {
                 <li>Background noise</li>
                 <li>Change of mind</li>
               </ul>
-              <span className="more muted">No results yet. The leaderboard will list only runs that happened.</span>
-            </div>
+              <span className="more">Open the arena →</span>
+            </a>
           </div>
         </section>
 

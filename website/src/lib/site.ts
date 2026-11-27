@@ -2,8 +2,17 @@
 export const site = {
   company: "Viraam",
   tagline: "Voice AI that knows when to speak",
-  // The detector's API. Set NEXT_PUBLIC_EOT_API when deploying.
-  api: (process.env.NEXT_PUBLIC_EOT_API ?? "http://localhost:7861").replace(/\/$/, ""),
+  // The stress-test arena is its own site.
+  arena: "https://arena.kognigen.com",
+  // Where the public API lives, for the examples on the product page. The API
+  // is part of this site (src/app/api). On Vercel the address is worked out
+  // from the project's production domain; NEXT_PUBLIC_EOT_API overrides it.
+  api: (
+    process.env.NEXT_PUBLIC_EOT_API ??
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/api`
+      : "http://localhost:3000/api")
+  ).replace(/\/$/, ""),
 };
 
 // Measured results, copied from the detector project's results/ files.

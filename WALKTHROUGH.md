@@ -257,6 +257,24 @@ The export is exact, and a decision costs about 22 ms, well under the 100 ms bud
 
 **After retraining**: `uv run dvc repro` reruns `site_model` by itself. Commit `website/public/model/` and the site picks up the new model on the next deploy.
 
+
+## Step 17: A public API on the website
+
+**What**:
+- [website/src/app/api/predict/route.ts](website/src/app/api/predict/route.ts): `POST /api/predict` on the website's own address. Send a WAV file, or raw 32-bit float samples at 16 kHz; get back the probability that the speaker has finished.
+- [website/src/app/api/health/route.ts](website/src/app/api/health/route.ts): `GET /api/health`.
+- [website/public/eot-features.js](website/public/eot-features.js): the feature code, now one file shared by the browser demo and the API.
+- The home page's arena card now links to the live arena site.
+
+**Why**: the product page showed `http://localhost:7861` in its API example, an address that only works on the developer's own machine. Hosting the Python service needed a second platform and account. The website already ships the model for the demo, so the same model now also answers HTTP requests from the same deployment.
+
+**Trade-offs**:
+- It runs the model with onnxruntime-web on the server, about 200 ms per request locally, against 22 ms for the Python service. The Python service in `src/indic_eot/service` stays in the repo for anyone who wants the faster version on their own server.
+- It is open: no key and no rate limit. Requests are limited to 4 MB.
+- Only WAV files are decoded. Other sample rates are converted to 16 kHz with simple interpolation.
+
+**Checks made**: run locally against a production build. The two sample clips return 9.4% and 99.3%, the same as the browser demo; a raw-samples request returns the same value as the WAV request; wrong file types and malformed bodies return a clear error. It has not been run on Vercel yet.
+
 ## Where the project stands
 
 **What works**
